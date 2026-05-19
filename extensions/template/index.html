@@ -9,12 +9,14 @@
   <link rel="stylesheet" href="../../primitives.css">
   <!-- ② 役割トークン（不変） -->
   <link rel="stylesheet" href="../../semantic.css">
-  <!-- ③ プロファイル可変層（base + 自プロファイル1つでOK） -->
+  <!-- ③ Signature 派生（--color-signature から *-light/-dark/-tint/-shadow を自動生成） -->
+  <link rel="stylesheet" href="../../tokens/signature.css">
+  <!-- ④ プロファイル可変層（base + 自プロファイル1つでOK） -->
   <link rel="stylesheet" href="../../tokens/base.css">
   <link rel="stylesheet" href="../../tokens/profile-consumer.css">
-  <!-- ④ 見本部品（必要に応じて） -->
+  <!-- ⑤ 見本部品（必要に応じて） -->
   <link rel="stylesheet" href="../../tokens/components.css">
-  <!-- ⑤ プロジェクト固有スタイル（任意） -->
+  <!-- ⑥ プロジェクト固有スタイル（--color-signature の上書きはここで） -->
   <link rel="stylesheet" href="./styles/extensions.css">
 </head>
 

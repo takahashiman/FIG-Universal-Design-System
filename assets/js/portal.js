@@ -50,10 +50,25 @@ const h  = (tag, attrs = {}, ...children) => {
 /* ─────────────────────────────────────────────────────────────
    ルーティング
    ───────────────────────────────────────────────────────────── */
+/**
+ * ルートセグメントの正規化。
+ *   - URL バー上ではブラウザがスペース・日本語などを encode するため、
+ *     parseRoute は decodeURIComponent を通して PAGES のキーと一致させる。
+ *   - 逆向き（buildHref / setRoute）では明示的に encodeURIComponent し、
+ *     ブラウザによる二重エンコードを防ぐ。
+ */
+function encodeFull(full) {
+  return full.split('/').map(encodeURIComponent).join('/');
+}
+
+function safeDecode(s) {
+  try { return decodeURIComponent(s); } catch (_) { return s; }
+}
+
 function parseRoute() {
   const raw = location.hash.replace(/^#\/?/, '');
   if (!raw) return null;
-  const parts = raw.split('/').filter(Boolean);
+  const parts = raw.split('/').filter(Boolean).map(safeDecode);
   if (parts.length < 3) return null;
   return {
     scope:   parts[0],
@@ -64,15 +79,16 @@ function parseRoute() {
 }
 
 function setRoute(full) {
-  if (location.hash.slice(2) === full) {
+  const encoded = encodeFull(full);
+  if (location.hash.replace(/^#\/?/, '') === encoded) {
     render();
   } else {
-    location.hash = `#/${full}`;
+    location.hash = `#/${encoded}`;
   }
 }
 
 function buildHref(full) {
-  return `#/${full}`;
+  return `#/${encodeFull(full)}`;
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -100,12 +116,23 @@ function renderSidebar(scope, currentRoute) {
     const items = h('ul', { class: 'sidebar-section__items', role: 'list' });
     for (const item of section.items) {
       const full = `${scope}/${section.id}/${item.id}`;
+      const page = PAGES[full];
+      const avail = (page && page.availability) || {};
+      const aAdmin    = avail.admin    || 'recommended';
+      const aConsumer = avail.consumer || 'recommended';
+      const aTerminal = avail.terminal || 'recommended';
       const a = h('a', {
         class: 'sidebar-item',
         href: buildHref(full),
         'data-route': full,
-        text: item.label,
+        'data-avail-admin':    aAdmin,
+        'data-avail-consumer': aConsumer,
+        'data-avail-terminal': aTerminal,
       });
+      a.append(h('span', { class: 'sidebar-item__label', text: item.label }));
+      // availability badge — visibility controlled by CSS (body.fig-profile-* selectors)
+      a.append(h('span', { class: 'sidebar-item__badge sidebar-item__badge--avoid',  'aria-hidden': 'true', text: 'N/A' }));
+      a.append(h('span', { class: 'sidebar-item__badge sidebar-item__badge--caution','aria-hidden': 'true', text: '注意' }));
       if (currentRoute && currentRoute.full === full) {
         a.setAttribute('aria-current', 'page');
       }
@@ -319,13 +346,51 @@ function renderPreviewPanel(page) {
   return renderIframe(page.preview);
 }
 
+/* Resolve a profile-aware value. Accepts:
+ *  - string                 → universal
+ *  - { default, admin?, consumer?, terminal? } → per-profile with default fallback
+ *  - null/undefined         → null
+ * Returns the resolved string for the given profile, or null. */
+function resolveProfileValue(value, profile) {
+  if (value == null) return null;
+  if (typeof value === 'string') return value;
+  return value[profile] || value.default || null;
+}
+
 function renderTokensPanel(page) {
   const root = h('div');
   root.append(
     h('div', { class: 'page-prose jp-prose' },
-      h('p', { text: 'このコンポーネントが参照する意味的トークンの抜粋です。詳細は Spec を参照してください。' }),
+      h('p', { text: 'このコンポーネントが参照する意味的トークン、およびプロファイル別の実装例です。' }),
     ),
   );
+
+  // ── Code block (profile-aware) ──
+  if (page.code) {
+    const codeWrap = h('div', { class: 'code-blocks' });
+    ['admin', 'consumer', 'terminal'].forEach(p => {
+      const body = resolveProfileValue(page.code, p);
+      if (!body) return;
+      codeWrap.append(
+        h('pre', { class: 'page-code', 'data-code-profile': p },
+          h('code', { class: 'language-html', text: body }),
+        ),
+      );
+    });
+    root.append(
+      h('h3', { class: 'page-prose', text: 'Code（プロファイル連動）' }),
+      codeWrap,
+    );
+    // Trigger Prism syntax highlighting once Prism is loaded.
+    if (window.Prism && window.Prism.highlightAllUnder) {
+      window.Prism.highlightAllUnder(codeWrap);
+    } else {
+      window.addEventListener('load', () => {
+        if (window.Prism && window.Prism.highlightAllUnder) window.Prism.highlightAllUnder(codeWrap);
+      }, { once: true });
+    }
+  }
+
   if (page.spec) {
     root.append(
       h('p', { class: 'page-prose' },
@@ -373,22 +438,35 @@ function renderSpecPanel(page) {
 }
 
 function renderA11yPanel(page) {
-  return h('div', { class: 'a11y-callout' },
-    h('strong', { text: 'Accessibility' }),
-    h('div', { class: 'jp-text', html: page.a11y || 'このページの a11y 注意点は spec を参照してください。' }),
-  );
+  const fallback = 'このページの a11y 注意点は spec を参照してください。';
+  // If a11y is a string (legacy) or absent — emit 3 identical blocks so CSS show/hide always finds one.
+  // If a11y is an object — resolve per profile with default fallback.
+  const wrap = h('div', { class: 'a11y-blocks' });
+  ['admin', 'consumer', 'terminal'].forEach(p => {
+    const body = resolveProfileValue(page.a11y, p) || fallback;
+    wrap.append(
+      h('div', { class: 'a11y-callout', 'data-a11y-profile': p },
+        h('strong', { text: 'Accessibility' }),
+        h('div', { class: 'jp-text', html: body }),
+      ),
+    );
+  });
+  return wrap;
 }
 
 function renderIframe(src) {
   const wrap = h('div');
+  // Device frame: max-width / aspect hint is driven by body.fig-profile-* via CSS
+  const frame = h('div', { class: 'preview-frame', 'data-preview-frame': 'true' });
   const iframe = h('iframe', {
     class: 'page-iframe',
     src,
     loading: 'lazy',
     title: 'ライブプレビュー',
   });
+  frame.append(iframe);
   wrap.append(
-    iframe,
+    frame,
     h('div', { class: 'page-iframe-meta' },
       h('a', { href: src, target: '_blank', rel: 'noopener', text: '新しいタブで開く ↗' }),
     ),
@@ -420,6 +498,25 @@ function render() {
 
   const page = PAGES[route.full];
   main.append(renderPageHeader(page));
+
+  // Profile-aware availability warning banner (CSS-driven: shows only when current profile = avoid/caution)
+  if (page.availability) {
+    const a = page.availability;
+    main.append(
+      h('div', {
+        class: 'page-avail-banner',
+        'data-avail-admin':    a.admin    || 'recommended',
+        'data-avail-consumer': a.consumer || 'recommended',
+        'data-avail-terminal': a.terminal || 'recommended',
+      },
+        h('span', { class: 'page-avail-banner__icon', 'aria-hidden': 'true', text: '⚠' }),
+        h('span', { class: 'page-avail-banner__text' },
+          h('strong', { class: 'page-avail-banner__head' }),
+          h('span', { class: 'page-avail-banner__desc', text: 'このコンポーネントは選択中のプロファイルでの利用に注意が必要です。プロファイル別の利用指針を Accessibility タブで確認してください。' }),
+        ),
+      ),
+    );
+  }
 
   let body;
   switch (page.template) {

@@ -32,12 +32,23 @@ Copy-Item -Recurse extensions/template extensions/{your-project-name}
 - `projectName`（ケバブケース・英小文字）
 - `displayName`（表示名）
 - `designSystem.profile`（`Web-Admin` / `Mobile-Consumer` / `Mobile-Terminal` から選択）
-- `signatureColor`（独自識別色）
+- `signatureColor.value` / `name`（独自識別色）
+- `signatureColor.harmonization`（[Hue × Taste マトリクス](../../tokens/signature-presets.json) から 1 セル選択 → preset / hue / taste / relation / baseToken が一括確定）
 
-詳細は [Developer Guide / Project Duplication](../../#/developer/guide/project-duplication) を参照。
+詳細は [Developer Guide / Project Duplication](../../#/developer/guide/project-duplication) と [Color System & Palette](../../#/core/foundations/color-system) を参照。
+プリセットを対話的に選びたい場合は [AI Co-creation](../../#/developer/guide/ai-co-creation#ai-generator) の Generator を利用。
 
 ### 3. index.html をプロジェクト用に書き換え
 `<body class="fig-profile-*">` のプロファイルを project-settings.json に合わせる。
+CSS の読み込み順は `primitives → semantic → tokens/signature.css → tokens/base → tokens/profile-* → tokens/components → ./styles/extensions.css`。
+
+### 3-a. styles/extensions.css で `--color-signature` を上書き
+```css
+:root {
+  --color-signature: #007A7A;   /* project-settings.json の signatureColor.value と一致 */
+}
+```
+これだけで `--color-signature-light` / `-dark` / `-tint` / `-shadow` が `tokens/signature.css` から自動派生します。直接これらを上書きしないこと。
 
 ### 4. ポータルへ登録
 `assets/js/portal-content.js` の `SITEMAP.extensions.sections` に追記。
@@ -51,8 +62,10 @@ Copy-Item -Recurse extensions/template extensions/{your-project-name}
 
 ## チェックリスト
 
-- [ ] `project-settings.json` の必須項目を埋めた
+- [ ] `project-settings.json` の必須項目を埋めた（`signatureColor.harmonization.preset` を含む）
+- [ ] `styles/extensions.css` の `:root { --color-signature: ...; }` が `signatureColor.value` と一致
 - [ ] `index.html` のプロファイルクラスを設定
+- [ ] `index.html` で `tokens/signature.css` を読み込み済み
 - [ ] ポータルから自プロジェクトページが開ける
 - [ ] Profile Switcher を切り替えても表示が壊れない
 - [ ] このREADME を自プロジェクト用に書き換えた

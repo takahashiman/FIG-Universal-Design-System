@@ -10,8 +10,15 @@
   },
   "signatureColor": {
     "value": "#26B7BC",
-    "name": "Sample Turquoise",
-    "harmonization": "FIG Brand Primary 同色（差別化のため必ず自プロダクト固有色へ変更）"
+    "name": "Brand Turquoise",
+    "harmonization": {
+      "preset": "turquoise-pop",
+      "hue": "turquoise",
+      "taste": "pop",
+      "relation": "monochromatic",
+      "baseToken": "--color-brand-primary",
+      "note": "テンプレート初期値。複製後は tokens/signature-presets.json の Hue × Taste マトリクスから自プロダクト用プリセットを再選択すること。"
+    }
   },
   "owners": [
     "@github-handle-1",

@@ -153,6 +153,14 @@ const SITEMAP = {
         ],
       },
       {
+        id: 'llocana',
+        label: 'バス運行情報・通知機能 (Mobile-Consumer)',
+        hint: 'バス運行情報と通知機能を備えたモバイルWebアプリ',
+        items: [
+          { id: 'overview',           label: 'Overview' },
+        ],
+      },
+      {
         id: 'template',
         label: '+ New Project',
         hint: 'プロジェクト複製ガイド',
@@ -172,6 +180,8 @@ const SITEMAP = {
         hint: '導入・運用・貢献',
         items: [
           { id: 'getting-started',     label: 'Getting Started（導入手順）' },
+          { id: 'asset-reference',     label: 'Asset Reference（資産地図）' },
+          { id: 'integration',         label: 'Integration Guide（外部リポへの導入）' },
           { id: 'version-management',  label: 'Version Management（バージョン管理）' },
           { id: 'migration',           label: 'Migration Guide（移行ガイド）' },
           { id: 'project-duplication', label: 'Project Duplication（複製方法）' },
@@ -242,16 +252,150 @@ const PAGES = {
     title: 'Color System & Palette',
     description: 'シグネチャー選択と機能色の調和（Harmonization）ルール。',
     body: `
+      <style>
+        .fig-preset-matrix { width: 100%; border-collapse: collapse; margin: var(--fig-spacing-m, 16px) 0; font-size: var(--fig-size-caption, 13px); }
+        .fig-preset-matrix th, .fig-preset-matrix td { border: 1px solid var(--color-border-subtle, #e1e3e6); padding: 8px 10px; text-align: left; vertical-align: middle; }
+        .fig-preset-matrix thead th { background: var(--color-surface-subtle, #f7f8f9); font-weight: 600; }
+        .fig-preset-matrix .preset-row-head { background: var(--color-surface-subtle, #f7f8f9); font-weight: 600; white-space: nowrap; }
+        .fig-preset-swatch { display: inline-flex; align-items: center; gap: 8px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; }
+        .fig-preset-swatch__chip { width: 18px; height: 18px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.08); flex-shrink: 0; }
+        .fig-preset-swatch__name { display: block; font-family: var(--font-sans); font-size: 11px; color: var(--color-text-subtle, #6b7280); margin-top: 2px; }
+      </style>
+
       <h3>原則</h3>
       <p>各プロダクト（Extensions）は、Core で定義された <strong>FIG Brand Colors</strong> を「守るべき不変点」として持ちつつ、自プロダクトの個性を表す <strong>Signature Color</strong> を1色だけ選択します。</p>
       <p>機能色（Success / Warning / Error / Info）は Signature の色相に合わせて<strong>調和的（Harmonized）に</strong>派生させ、ブランド全体のトーン&マナーを保ったまま、サービスごとの識別性も両立させます。</p>
-      <h3>1. Signature Color の選択</h3>
+
+      <h3>1. Signature Color の選び方（3 段ピラミッド）</h3>
+      <p>次の順で 1 → 2 → 3 と決めると、自然と <code>project-settings.json</code> の <code>signatureColor</code> 全体が埋まります。</p>
+      <ol>
+        <li><strong>色相 (Hue)</strong> を選ぶ — Turquoise（FIG準拠）/ Sky Blue（FIG準拠）/ Red（緊急・情熱）/ Orange（活発）/ Mono（静謐）の 5 択。</li>
+        <li><strong>テイスト (Taste)</strong> を選ぶ — Pop（明・親しみ）/ Trust（深・業務）/ Calm（淡・静謐）の 3 択。</li>
+        <li>マトリクスから <strong>プリセット 1 セル</strong>が決定 → <code>value</code> / <code>name</code> / <code>relation</code> / <code>baseToken</code> が一括で確定。</li>
+      </ol>
+      <p>プリセット ID は <code>{hue}-{taste}</code> 形式（例: <code>turquoise-trust</code>）。微調整したい場合のみ <code>value</code> を上書きし、<code>note</code> に意図を書き残します。</p>
+
+      <h3>2. Hue × Taste マトリクス（プリセット表）</h3>
+      <p>正典定義: <code>tokens/signature-presets.json</code>。ランタイム同期コピー: <code>assets/js/ai-co-creation.js</code>。</p>
+      <table class="fig-preset-matrix">
+        <thead>
+          <tr>
+            <th>Taste ＼ Hue</th>
+            <th>Turquoise<br><span class="fig-preset-swatch__name">monochromatic / --color-brand-primary</span></th>
+            <th>Sky Blue<br><span class="fig-preset-swatch__name">monochromatic / --color-brand-secondary</span></th>
+            <th>Red<br><span class="fig-preset-swatch__name">complementary / --color-brand-primary</span></th>
+            <th>Orange<br><span class="fig-preset-swatch__name">complementary / --color-brand-primary</span></th>
+            <th>Mono<br><span class="fig-preset-swatch__name">neutral-mono / --color-neutral-dark</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th class="preset-row-head">Pop<br><span class="fig-preset-swatch__name">明・親しみ</span></th>
+            <td><span class="fig-preset-swatch"><span class="fig-preset-swatch__chip" style="background:#26B7BC"></span>#26B7BC</span><span class="fig-preset-swatch__name">turquoise-pop / Brand Turquoise</span></td>
+            <td><span class="fig-preset-swatch"><span class="fig-preset-swatch__chip" style="background:#38A1DB"></span>#38A1DB</span><span class="fig-preset-swatch__name">blue-pop / Brand Sky</span></td>
+            <td><span class="fig-preset-swatch"><span class="fig-preset-swatch__chip" style="background:#E5484D"></span>#E5484D</span><span class="fig-preset-swatch__name">red-pop / Signal Red</span></td>
+            <td><span class="fig-preset-swatch"><span class="fig-preset-swatch__chip" style="background:#F97316"></span>#F97316</span><span class="fig-preset-swatch__name">orange-pop / Energetic Orange</span></td>
+            <td><span class="fig-preset-swatch"><span class="fig-preset-swatch__chip" style="background:#64748B"></span>#64748B</span><span class="fig-preset-swatch__name">mono-pop / Slate Mid</span></td>
+          </tr>
+          <tr>
+            <th class="preset-row-head">Trust<br><span class="fig-preset-swatch__name">深・業務 / CTA 安全</span></th>
+            <td><span class="fig-preset-swatch"><span class="fig-preset-swatch__chip" style="background:#1A8589"></span>#1A8589</span><span class="fig-preset-swatch__name">turquoise-trust / Deep Turquoise</span></td>
+            <td><span class="fig-preset-swatch"><span class="fig-preset-swatch__chip" style="background:#2378A8"></span>#2378A8</span><span class="fig-preset-swatch__name">blue-trust / Operations Blue</span></td>
+            <td><span class="fig-preset-swatch"><span class="fig-preset-swatch__chip" style="background:#B91C1C"></span>#B91C1C</span><span class="fig-preset-swatch__name">red-trust / Deep Crimson</span></td>
+            <td><span class="fig-preset-swatch"><span class="fig-preset-swatch__chip" style="background:#C2410C"></span>#C2410C</span><span class="fig-preset-swatch__name">orange-trust / Burnt Amber</span></td>
+            <td><span class="fig-preset-swatch"><span class="fig-preset-swatch__chip" style="background:#595757"></span>#595757</span><span class="fig-preset-swatch__name">mono-trust / FIG Sub-2</span></td>
+          </tr>
+          <tr>
+            <th class="preset-row-head">Calm<br><span class="fig-preset-swatch__name">淡・静謐 / 非 CTA</span></th>
+            <td><span class="fig-preset-swatch"><span class="fig-preset-swatch__chip" style="background:#5CCED2"></span>#5CCED2</span><span class="fig-preset-swatch__name">turquoise-calm / Light Turquoise</span></td>
+            <td><span class="fig-preset-swatch"><span class="fig-preset-swatch__chip" style="background:#6BB8E4"></span>#6BB8E4</span><span class="fig-preset-swatch__name">blue-calm / Light Sky</span></td>
+            <td><span class="fig-preset-swatch"><span class="fig-preset-swatch__chip" style="background:#FECDD3"></span>#FECDD3</span><span class="fig-preset-swatch__name">red-calm / Petal Rose</span></td>
+            <td><span class="fig-preset-swatch"><span class="fig-preset-swatch__chip" style="background:#FED7AA"></span>#FED7AA</span><span class="fig-preset-swatch__name">orange-calm / Soft Apricot</span></td>
+            <td><span class="fig-preset-swatch"><span class="fig-preset-swatch__chip" style="background:#B5B5B6"></span>#B5B5B6</span><span class="fig-preset-swatch__name">mono-calm / FIG Sub-1</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <p><strong>CTA 安全性</strong>: <code>Trust</code> 行のみ白テキスト 4.5:1 を保証。<code>Pop</code> は装飾・ロゴ面、<code>Calm</code> は tint / badge 用途で、CTA 背景に用いる場合は別途 <code>*-dark</code> 派生を作ること。</p>
+
+      <h3>3. 既存プロダクトの選択例</h3>
       <ul>
-        <li><strong>Busapp (Mobile-Consumer)</strong>: <code>#26B7BC</code>（Turquoise）— 動と信頼</li>
-        <li><strong>Admin Console (Web-Admin)</strong>: <code>#38A1DB</code>（Sky Blue）— 静と分析</li>
-        <li><strong>Driver Terminal (Mobile-Terminal)</strong>: <code>#1A8589</code>（Deep Turquoise）— 業務の重厚さ</li>
+        <li><strong>Busapp (Mobile-Consumer)</strong>: <code>turquoise-pop</code> — <code>#26B7BC</code>（動と信頼）</li>
+        <li><strong>Admin Console (Web-Admin)</strong>: <code>blue-pop</code> — <code>#38A1DB</code>（静と分析）</li>
+        <li><strong>Driver Terminal (Mobile-Terminal)</strong>: <code>turquoise-trust</code> — <code>#1A8589</code>（業務の重厚さ）</li>
+        <li><strong>LLocana</strong>: <code>turquoise-trust</code> をベースに <code>#007A7A</code> へ微調整（彩度100%振り） — <code>preset: "custom"</code></li>
       </ul>
-      <h3>2. Harmonization ルール</h3>
+
+      <h3>4. 自動派生（CSS 変数 — <code>tokens/signature.css</code>）</h3>
+      <p>エンジニアは <code>extensions/{project}/styles/extensions.css</code> で <code>--color-signature</code> を 1 行書くだけ。<code>tokens/signature.css</code> が 4 つの派生トークンを <code>color-mix()</code> で自動生成します（primitives.css の <code>--color-brand-primary-*</code> と同形）。</p>
+
+      <pre class="page-code"><code>/* extensions/llocana/styles/extensions.css */
+:root {
+  --color-signature: #007A7A;   /* project-settings.json の signatureColor.value と一致 */
+}
+
+/* 以下 4 つは自動派生（直接上書き禁止） */
+/* --color-signature-light   = 白側 35% 寄せ      */
+/* --color-signature-dark    = 黒側 25% 寄せ      */
+/* --color-signature-tint    = 不透明度 10%       */
+/* --color-signature-shadow  = 不透明度 25%       */
+</code></pre>
+
+      <style>
+        .fig-sig-demo { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: var(--fig-spacing-m, 16px) 0; }
+        .fig-sig-demo__cell { padding: 12px; border-radius: 8px; border: 1px solid var(--color-border-subtle, #e1e3e6); font-size: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+        .fig-sig-demo__chip { display: block; height: 56px; border-radius: 6px; margin-bottom: 6px; border: 1px solid rgba(0,0,0,0.06); }
+        .fig-sig-demo__label { display: block; font-family: var(--font-sans); font-size: 11px; color: var(--color-text-subtle, #6b7280); margin-top: 2px; }
+        .fig-sig-demo[data-sig="turquoise-trust"] { --_sig: #1A8589; }
+        .fig-sig-demo[data-sig="red-pop"]         { --_sig: #E5484D; }
+        .fig-sig-demo[data-sig="custom"]          { --_sig: #007A7A; }
+        .fig-sig-demo .chip-base   { background: var(--_sig); }
+        .fig-sig-demo .chip-light  { background: color-mix(in oklch, var(--_sig) 65%, #FFFFFF); }
+        .fig-sig-demo .chip-dark   { background: color-mix(in oklch, var(--_sig) 75%, #000000); }
+        .fig-sig-demo .chip-tint   { background: color-mix(in srgb,  var(--_sig) 10%, transparent); }
+        .fig-sig-demo .chip-shadow { background: color-mix(in srgb,  var(--_sig) 25%, transparent); }
+      </style>
+
+      <p><strong>派生プレビュー</strong>（左から: <code>signature / -light / -dark / -tint / -shadow</code>）</p>
+
+      <p style="margin: 4px 0 6px;"><span class="fig-preset-swatch__name">turquoise-trust — #1A8589</span></p>
+      <div class="fig-sig-demo" data-sig="turquoise-trust">
+        <div class="fig-sig-demo__cell"><span class="fig-sig-demo__chip chip-base"></span>signature<span class="fig-sig-demo__label">--color-signature</span></div>
+        <div class="fig-sig-demo__cell"><span class="fig-sig-demo__chip chip-light"></span>-light<span class="fig-sig-demo__label">+ white 35%</span></div>
+        <div class="fig-sig-demo__cell"><span class="fig-sig-demo__chip chip-dark"></span>-dark<span class="fig-sig-demo__label">+ black 25%</span></div>
+        <div class="fig-sig-demo__cell"><span class="fig-sig-demo__chip chip-tint"></span>-tint<span class="fig-sig-demo__label">10% alpha</span></div>
+        <div class="fig-sig-demo__cell"><span class="fig-sig-demo__chip chip-shadow"></span>-shadow<span class="fig-sig-demo__label">25% alpha</span></div>
+      </div>
+
+      <p style="margin: 4px 0 6px;"><span class="fig-preset-swatch__name">red-pop — #E5484D</span></p>
+      <div class="fig-sig-demo" data-sig="red-pop">
+        <div class="fig-sig-demo__cell"><span class="fig-sig-demo__chip chip-base"></span>signature<span class="fig-sig-demo__label">--color-signature</span></div>
+        <div class="fig-sig-demo__cell"><span class="fig-sig-demo__chip chip-light"></span>-light<span class="fig-sig-demo__label">+ white 35%</span></div>
+        <div class="fig-sig-demo__cell"><span class="fig-sig-demo__chip chip-dark"></span>-dark<span class="fig-sig-demo__label">+ black 25%</span></div>
+        <div class="fig-sig-demo__cell"><span class="fig-sig-demo__chip chip-tint"></span>-tint<span class="fig-sig-demo__label">10% alpha</span></div>
+        <div class="fig-sig-demo__cell"><span class="fig-sig-demo__chip chip-shadow"></span>-shadow<span class="fig-sig-demo__label">25% alpha</span></div>
+      </div>
+
+      <p style="margin: 4px 0 6px;"><span class="fig-preset-swatch__name">LLocana — #007A7A（turquoise-trust 微調整）</span></p>
+      <div class="fig-sig-demo" data-sig="custom">
+        <div class="fig-sig-demo__cell"><span class="fig-sig-demo__chip chip-base"></span>signature<span class="fig-sig-demo__label">--color-signature</span></div>
+        <div class="fig-sig-demo__cell"><span class="fig-sig-demo__chip chip-light"></span>-light<span class="fig-sig-demo__label">+ white 35%</span></div>
+        <div class="fig-sig-demo__cell"><span class="fig-sig-demo__chip chip-dark"></span>-dark<span class="fig-sig-demo__label">+ black 25%</span></div>
+        <div class="fig-sig-demo__cell"><span class="fig-sig-demo__chip chip-tint"></span>-tint<span class="fig-sig-demo__label">10% alpha</span></div>
+        <div class="fig-sig-demo__cell"><span class="fig-sig-demo__chip chip-shadow"></span>-shadow<span class="fig-sig-demo__label">25% alpha</span></div>
+      </div>
+
+      <h4>使い方の目安</h4>
+      <ul>
+        <li><code>--color-signature</code> — ヒーロー面、ロゴマーク、装飾アクセント</li>
+        <li><code>--color-signature-light</code> — ホバー上位、サブヘッダ帯、ステップインジケーター</li>
+        <li><code>--color-signature-dark</code> — CTA 背景（白テキスト 4.5:1 保証）、選択中タブ下線</li>
+        <li><code>--color-signature-tint</code> — Badge / Chip 背景、テーブル選択行</li>
+        <li><code>--color-signature-shadow</code> — フォーカスリング、エレベーション付きカードの影</li>
+      </ul>
+
+      <p><strong>ブラウザ要件</strong>: <code>color-mix()</code> は Chrome 111+ / Safari 16.2+ / Firefox 113+ で利用可。レガシー対応が必要な場合のみ、project-settings.json の <code>signatureColor.value</code> から JS で 5 トークンをプリコンパイルすることを検討。</p>
+
+      <h3>5. Harmonization ルール（機能色派生）</h3>
       <p>機能色は Signature の HSL 値から ±15° 以内の色相ずらしを基本とし、彩度・明度は WCAG コントラストで決定します：</p>
       <ul>
         <li><code>--color-status-success</code>: 緑系。Signature の色相に近い側（Turquoise なら Teal 寄り）。</li>
@@ -259,7 +403,8 @@ const PAGES = {
         <li><code>--color-status-error</code>: 赤系。色温度は彩度を Signature と揃える（くすませない／鮮やかすぎない）。</li>
         <li><code>--color-status-info</code>: 青系。Signature が青系ならコントラストで分離（明度を強く変える）。</li>
       </ul>
-      <h3>3. 利用ルール</h3>
+
+      <h3>6. 利用ルール</h3>
       <p>Signature と機能色は必ず <strong>semantic.css</strong> 経由でアクセスし、コンポーネントから生 hex を書かないこと。プロファイル（Device Profile）切替時に色の意味が壊れないよう、トークン名は「役割」を表現します。</p>
     `,
     preview: 'preview/colors-brand.html',
@@ -422,41 +567,41 @@ const PAGES = {
   },
 
   /* ════════ Core / Components — Navigation & Structure ════════ */
-  'core/components-navigation/fig-sense':       { template: 'component', title: 'FIG Sense（総覧）',  description: '角丸・アイソレーション・最小サイズの総合ショーケース。',                                                      preview: 'preview/components-fig-sense.html',                                                                   spec: null,                                  a11y: 'すべての構成部品は WCAG AA + 日本語禁則を満たすトークンを経由します。' },
-  'core/components-navigation/header':          { template: 'component', title: 'Header / Footer',   description: 'ページ最上部のグローバル領域と、最下部の補助領域。ブランド・主要ナビ・補助情報の所在を固定。',                preview: 'preview/components-header.html',                  spec: null,                                  a11y: '<code>&lt;header&gt;</code> / <code>&lt;footer&gt;</code> ランドマーク。スキップリンクで本文へ即移動可能に。' },
-  'core/components-navigation/navigation-rail': { template: 'component', title: 'Navigation Rail',   description: 'デスクトップ・タブレット向けの縦型ナビ。M3 準拠の中密度ナビゲーション。',                                     preview: 'preview/components-navigation-rail.html',             spec: null,                                  a11y: '<code>&lt;nav aria-label&gt;</code> + <code>aria-current="page"</code>。アイコン単独でも label を必須化。' },
-  'core/components-navigation/navigation-bar':  { template: 'component', title: 'Navigation Bar',    description: '画面下端固定のグローバルナビ（旧 Bottom Navigation）。3–5 タブが原則。',                                  preview: 'preview/components-navigation-bar.html',            spec: 'components/bottom-navigation.spec.md', a11y: '<code>&lt;nav aria-label&gt;</code> + 各アイテムに <code>aria-current</code>。48×48 タッチターゲット確保。' },
-  'core/components-navigation/side-sheet':      { template: 'component', title: 'Side Sheet',        description: '横からスライドインする補助領域。永続/モーダルの2形態。',                                                         preview: 'preview/components-side-sheet.html',                       spec: null,                                  a11y: 'modal 形態は <code>role="dialog"</code> + フォーカストラップ + Esc。スクリム必須。' },
-  'core/components-navigation/bottom-sheet':    { template: 'component', title: 'Bottom Sheet',      description: '画面下端から立ち上がる一時領域。標準/モーダル/拡張可能の3形態。',                                                preview: 'preview/components-bottom-sheet.html',                   spec: null,                                  a11y: 'ドラッグハンドルに <code>role="button"</code>。modal 時はフォーカストラップ + Esc。' },
-  'core/components-navigation/breadcrumb':      { template: 'component', title: 'Breadcrumb',        description: '階層構造内の現在地と上位への経路。3階層以上から検討。',                                                          preview: 'preview/components-breadcrumb.html',                         spec: null,                                  a11y: '<code>&lt;nav aria-label="現在地"&gt;</code> + 最終要素に <code>aria-current="page"</code>。' },
-  'core/components-navigation/pagination':      { template: 'component', title: 'Pagination',        description: 'リスト・テーブルの分割ナビゲーション。前後ジャンプと番号指定を併設。',                                            preview: 'preview/components-pagination.html',                         spec: null,                                  a11y: '<code>&lt;nav aria-label="ページ送り"&gt;</code>。現在ページに <code>aria-current="page"</code>。' },
-  'core/components-navigation/tabs':             { template: 'component', title: 'Tabs',              description: '並列で排他的なビューを切り替える。3タブ以上は再検討。',                                                          preview: 'preview/components-tabs.html',                                                                        spec: 'components/tab.spec.md',              a11y: '<code>role="tablist"</code> / <code>role="tab"</code> / <code>aria-selected</code> + ←→ キー。' },
+  'core/components-navigation/fig-sense':       { template: 'component', title: 'FIG Sense（総覧）',  description: '角丸・アイソレーション・最小サイズの総合ショーケース。',                                                      preview: 'preview/components-fig-sense.html',                                                                   spec: 'components/fig-sense.spec.md',                                  a11y: 'すべての構成部品は WCAG AA + 日本語禁則を満たすトークンを経由します。' },
+  'core/components-navigation/header':          { template: 'component', title: 'Header / Footer',   description: 'ページ最上部のグローバル領域と、最下部の補助領域。ブランド・主要ナビ・補助情報の所在を固定。',                preview: 'preview/components-header.html',                  spec: 'components/header.spec.md',                                  a11y: '<code>&lt;header&gt;</code> / <code>&lt;footer&gt;</code> ランドマーク。スキップリンクで本文へ即移動可能に。', code: { admin: '<!-- admin: 水平多層配置（ブランド + ナビ + アクション） -->\n<header class="app-header">\n  <div class="app-header__brand">FIG Portal</div>\n  <nav class="app-header__nav" aria-label="メイン">\n    <a href="#" aria-current="page">ダッシュボード</a>\n    <a href="#">路線管理</a>\n    <a href="#">運行状況</a>\n  </nav>\n  <div class="app-header__actions">\n    <button class="icon-btn" aria-label="通知"></button>\n    <div class="avatar">MT</div>\n  </div>\n</header>', consumer: '<!-- consumer: モバイル単層・ハンバーガー + タイトル + 補助 -->\n<header class="app-header app-header--mobile">\n  <button class="icon-btn" aria-label="メニュー"></button>\n  <h1 class="app-header__title">マイバス</h1>\n  <button class="icon-btn" aria-label="通知"></button>\n</header>', terminal: '<!-- terminal: 大型タイトル + 時計の最小構成 -->\n<header class="app-header app-header--terminal">\n  <h1 class="app-header__title app-header__title--large">運行状況</h1>\n  <div class="app-header__clock" aria-live="off">09:30:21</div>\n</header>' } },
+  'core/components-navigation/navigation-rail': { template: 'component', title: 'Navigation Rail',   description: 'デスクトップ・タブレット向けの縦型ナビ。M3 準拠の中密度ナビゲーション。',                                     preview: 'preview/components-navigation-rail.html',             spec: 'components/navigation-rail.spec.md',                                  a11y: '<code>&lt;nav aria-label&gt;</code> + <code>aria-current="page"</code>。アイコン単独でも label を必須化。', availability: { admin: 'recommended', consumer: 'avoid',       terminal: 'avoid' }, code: { admin: '<!-- admin: デスクトップ縦型ナビ。FAB と項目をピル状インジケータで識別 -->\n<nav class="rail" aria-label="メイン">\n  <button class="rail__fab" aria-label="新規作成">+</button>\n  <a href="#" class="rail__item" aria-current="page">\n    <span class="rail__indicator"><i data-lucide="layout-dashboard"></i></span>\n    <span class="rail__label">概要</span>\n  </a>\n  <a href="#" class="rail__item">\n    <span class="rail__indicator"><i data-lucide="route"></i></span>\n    <span class="rail__label">路線</span>\n  </a>\n</nav>' } },
+  'core/components-navigation/navigation-bar':  { template: 'component', title: 'Navigation Bar',    description: '画面下端固定のグローバルナビ（旧 Bottom Navigation）。3–5 タブが原則。',                                  preview: 'preview/components-navigation-bar.html',            spec: 'components/bottom-navigation.spec.md', a11y: { default: '<code>&lt;nav aria-label&gt;</code> + 各アイテムに <code>aria-current</code>。48×48 タッチターゲット確保。', consumer: '<code>&lt;nav aria-label="メイン"&gt;</code> + <code>aria-current="page"</code>。タッチターゲット 48×48 px 以上。色だけでなくインジケータピルで識別。', terminal: '<code>&lt;nav aria-label="メイン"&gt;</code>。<strong>タッチターゲット 56×56 px 以上</strong>。誤操作防止のため業務直結の 3 タブに限定。' }, availability: { admin: 'avoid',       consumer: 'recommended', terminal: 'recommended' }, code: { consumer: '<!-- consumer: 3–4 タブが基本。インジケータピルで選択中を表現 -->\n<nav class="navbar" aria-label="メイン">\n  <a href="#" aria-current="page"><i data-lucide="home"></i><span>ホーム</span></a>\n  <a href="#"><i data-lucide="route"></i><span>経路</span></a>\n  <a href="#"><i data-lucide="bell"></i><span>通知</span></a>\n  <a href="#"><i data-lucide="user"></i><span>マイ</span></a>\n</nav>', terminal: '<!-- terminal: 大型タップ領域、業務ドメインに直結する 3 タブ -->\n<nav class="navbar navbar--large" aria-label="メイン">\n  <a href="#" aria-current="page"><i data-lucide="home"></i><span>ホーム</span></a>\n  <a href="#"><i data-lucide="bus"></i><span>運行</span></a>\n  <a href="#"><i data-lucide="alert-triangle"></i><span>異常</span></a>\n</nav>' } },
+  'core/components-navigation/side-sheet':      { template: 'component', title: 'Side Sheet',        description: '横からスライドインする補助領域。永続/モーダルの2形態。',                                                         preview: 'preview/components-side-sheet.html',                       spec: 'components/side-sheet.spec.md',                                  a11y: 'modal 形態は <code>role="dialog"</code> + フォーカストラップ + Esc。スクリム必須。', availability: { admin: 'recommended', consumer: 'caution',     terminal: 'avoid' }, code: { admin: '<!-- admin: 永続パネル形態。主画面と並列表示、コラプス可能 -->\n<aside class="side-sheet side-sheet--persistent" aria-label="フィルタ">\n  <header class="side-sheet__header"><h2>フィルタ</h2></header>\n  <div class="side-sheet__body">…</div>\n</aside>', consumer: '<!-- consumer: スクリム付きモーダル形態。閉じる導線必須 -->\n<aside role="dialog" aria-modal="true" aria-labelledby="ss-title" class="side-sheet side-sheet--modal">\n  <header class="side-sheet__header">\n    <h2 id="ss-title">フィルタ</h2>\n    <button class="icon-btn" aria-label="閉じる">×</button>\n  </header>\n  <div class="side-sheet__body">…</div>\n</aside>\n<div class="scrim" aria-hidden="true"></div>' } },
+  'core/components-navigation/bottom-sheet':    { template: 'component', title: 'Bottom Sheet',      description: '画面下端から立ち上がる一時領域。標準/モーダル/拡張可能の3形態。',                                                preview: 'preview/components-bottom-sheet.html',                   spec: 'components/bottom-sheet.spec.md',                                  a11y: 'ドラッグハンドルに <code>role="button"</code>。modal 時はフォーカストラップ + Esc。', availability: { admin: 'caution',     consumer: 'recommended', terminal: 'recommended' }, code: { default: '<section class="bottom-sheet" role="dialog" aria-labelledby="bs-title" aria-modal="true">\n  <div class="bottom-sheet__handle" role="button" aria-label="シートをドラッグ" tabindex="0"></div>\n  <h2 id="bs-title" class="bottom-sheet__title">渋谷駅前</h2>\n  <p class="bottom-sheet__desc">次のバスまで あと 3 分</p>\n  <div class="bottom-sheet__body">…</div>\n</section>' } },
+  'core/components-navigation/breadcrumb':      { template: 'component', title: 'Breadcrumb',        description: '階層構造内の現在地と上位への経路。3階層以上から検討。',                                                          preview: 'preview/components-breadcrumb.html',                         spec: 'components/breadcrumb.spec.md',                                  a11y: '<code>&lt;nav aria-label="現在地"&gt;</code> + 最終要素に <code>aria-current="page"</code>。', availability: { admin: 'recommended', consumer: 'caution',     terminal: 'avoid' }, code: { default: '<nav class="crumbs" aria-label="現在地">\n  <a href="#" class="crumbs__home">ホーム</a>\n  <span class="sep" aria-hidden="true">›</span>\n  <a href="#">路線管理</a>\n  <span class="sep" aria-hidden="true">›</span>\n  <span aria-current="page">渋谷 — 新宿 線</span>\n</nav>' } },
+  'core/components-navigation/pagination':      { template: 'component', title: 'Pagination',        description: 'リスト・テーブルの分割ナビゲーション。前後ジャンプと番号指定を併設。',                                            preview: 'preview/components-pagination.html',                         spec: 'components/pagination.spec.md',                                  a11y: '<code>&lt;nav aria-label="ページ送り"&gt;</code>。現在ページに <code>aria-current="page"</code>。', availability: { admin: 'recommended', consumer: 'caution',     terminal: 'caution'    }, code: { default: '<nav class="pager" aria-label="ページ送り">\n  <button aria-label="前のページ" disabled>‹</button>\n  <button aria-current="page">1</button>\n  <button>2</button>\n  <button>3</button>\n  <span class="pager__ellipsis">…</span>\n  <button>24</button>\n  <button aria-label="次のページ">›</button>\n</nav>' } },
+  'core/components-navigation/tabs':             { template: 'component', title: 'Tabs',              description: '並列で排他的なビューを切り替える。3タブ以上は再検討。',                                                          preview: 'preview/components-tabs.html',                                                                        spec: 'components/tab.spec.md',              a11y: '<code>role="tablist"</code> / <code>role="tab"</code> / <code>aria-selected</code> + ←→ キー。', code: { default: '<div class="tabs" role="tablist" aria-label="ビュー切替">\n  <button role="tab" aria-selected="true" id="tab-1" aria-controls="panel-1">概要</button>\n  <button role="tab" aria-selected="false" id="tab-2" aria-controls="panel-2" tabindex="-1">詳細</button>\n  <button role="tab" aria-selected="false" id="tab-3" aria-controls="panel-3" tabindex="-1">設定</button>\n</div>\n<section role="tabpanel" id="panel-1" aria-labelledby="tab-1">…</section>' } },
 
   /* ════════ Core / Components — Actions & Buttons ════════ */
-  'core/components-actions/button':           { template: 'component', title: 'Common Button',       description: '主要CTA は Pill（--radius-cta）、Secondary は 16px。Primary/Secondary/Tertiary/Destructive の4種。',          preview: 'preview/components-buttons.html',                                                                     spec: 'components/button.spec.md',           a11y: '<code>aria-disabled</code> 併記、icon-only は <code>ariaLabel</code> 必須、loading 時は <code>aria-busy</code>。' },
-  'core/components-actions/fab':              { template: 'component', title: 'FAB',                 description: '画面内で最も突出した単一アクション（Floating Action Button）。1画面に1つが原則。',                                preview: 'preview/components-fab.html',                                       spec: null,                                  a11y: '<code>aria-label</code> 必須。48×48 px 以上。下端固定時は安全領域とインセットを考慮。' },
-  'core/components-actions/segmented-button': { template: 'component', title: 'Segmented Button',    description: '2–5 個の選択肢から1つ（or 複数）を切替。Tabs より粒度の細かい操作切替。',                                       preview: 'preview/components-segmented-button.html',           spec: null,                                  a11y: '<code>role="radiogroup"</code> + 子に <code>role="radio"</code>。複数選択時は <code>role="group"</code> + checkbox。' },
-  'core/components-actions/icon-button':      { template: 'component', title: 'Icon Button',         description: 'アイコンのみの圧縮されたボタン。ツールバー・密度の高い領域向け。',                                                  preview: 'preview/components-icon-button.html',                     spec: null,                                  a11y: '<code>aria-label</code> 必須（lucide 単独では意味伝達不可）。48×48 px 最小ヒット領域。' },
+  'core/components-actions/button':           { template: 'component', title: 'Common Button',       description: '主要CTA は Pill（--radius-cta）、Secondary は 16px。Primary/Secondary/Tertiary/Destructive の4種。',          preview: 'preview/components-buttons.html',                                                                     spec: 'components/button.spec.md',           a11y: { default: '<code>aria-disabled</code> 併記、icon-only は <code>ariaLabel</code> 必須、loading 時は <code>aria-busy</code>。', admin: 'キーボードフォーカス順序を維持し、Tab 移動が論理順序と一致すること。<code>aria-disabled</code> 併記、icon-only は <code>ariaLabel</code> 必須。', consumer: '<strong>タッチターゲット 48×48 px 以上</strong>（WCAG 2.5.5）。<code>aria-disabled</code> 併記、icon-only は <code>ariaLabel</code> 必須。', terminal: '<strong>タッチターゲット 56×56 px 以上 + 高コントラスト</strong>（手袋装着・現場照度を考慮）。<code>aria-disabled</code> 併記、icon-only は <code>ariaLabel</code> 必須。' }, code: { admin: '<!-- admin: 高密度 UI 向け compact 修飾子（min-height: 36px） -->\n<button class="btn btn--primary btn--compact">送信する</button>', consumer: '<!-- consumer: 親指操作向けに 48×48 タッチターゲット（min-height: 48px） -->\n<button class="btn btn--primary">送信する</button>', terminal: '<!-- terminal: 手袋・現場想定で大型化（min-height: 56px, font-size: 1.125rem） -->\n<button class="btn btn--primary btn--large">送信する</button>' } },
+  'core/components-actions/fab':              { template: 'component', title: 'FAB',                 description: '画面内で最も突出した単一アクション（Floating Action Button）。1画面に1つが原則。',                                preview: 'preview/components-fab.html',                                       spec: 'components/fab.spec.md',                                  a11y: { default: '<code>aria-label</code> 必須。48×48 px 以上。下端固定時は安全領域とインセットを考慮。', admin: '<code>aria-label</code> 必須。<strong>キーボードフォーカス順序の末尾</strong>に置く（補助 CTA のため）。', consumer: '<code>aria-label</code> 必須。<strong>48×48 px 以上</strong>。下端固定時は <code>env(safe-area-inset-bottom)</code> 加算。', terminal: '<code>aria-label</code> 必須。<strong>56×56 px 以上</strong>。誤タップ防止のため重要操作には使わない。' }, availability: { admin: 'caution', consumer: 'recommended', terminal: 'recommended' }, code: { default: '<button class="fab fab--regular" aria-label="新規作成">\n  <i data-lucide="plus"></i>\n</button>\n\n<!-- Extended（ラベル付き） -->\n<button class="fab fab--extended">\n  <i data-lucide="edit-3"></i>新規投稿\n</button>' } },
+  'core/components-actions/segmented-button': { template: 'component', title: 'Segmented Button',    description: '2–5 個の選択肢から1つ（or 複数）を切替。Tabs より粒度の細かい操作切替。',                                       preview: 'preview/components-segmented-button.html',           spec: 'components/segmented-button.spec.md',                                  a11y: { default: '<code>role="radiogroup"</code> + 子に <code>role="radio"</code>。複数選択時は <code>role="group"</code> + checkbox。', admin: '<code>role="radiogroup"</code> + <strong>Arrow キーで選択移動</strong>。複数選択時は <code>role="group"</code> + checkbox。', consumer: '<code>role="radiogroup"</code>。<strong>各セグメント 44×44 以上のタッチ領域</strong>。2–5 個推奨。', terminal: '<code>role="radiogroup"</code>。<strong>各セグメント 56×56 以上 + ラベル必須</strong>。アイコン単独不可。' }, code: { default: '<div class="seg" role="radiogroup" aria-label="表示モード">\n  <button class="seg__btn" role="radio" aria-pressed="true">日</button>\n  <button class="seg__btn" role="radio" aria-pressed="false">週</button>\n  <button class="seg__btn" role="radio" aria-pressed="false">月</button>\n</div>' } },
+  'core/components-actions/icon-button':      { template: 'component', title: 'Icon Button',         description: 'アイコンのみの圧縮されたボタン。ツールバー・密度の高い領域向け。',                                                  preview: 'preview/components-icon-button.html',                     spec: 'components/icon-button.spec.md',                                  a11y: { default: '<code>aria-label</code> 必須（lucide 単独では意味伝達不可）。48×48 px 最小ヒット領域。', admin: '<code>aria-label</code> 必須。Tooltip 併用で意図を補強。<strong>36×36 px 許容</strong>（密度の高い toolbar）。', consumer: '<code>aria-label</code> 必須。<strong>48×48 px 以上のタッチターゲット必須</strong>（WCAG 2.5.5）。', terminal: '<code>aria-label</code> 必須。<strong>56×56 px 以上 + 高コントラスト</strong>。手袋装着時の操作性を担保。' }, code: { default: '<button class="iconbtn" aria-label="お気に入り">\n  <i data-lucide="star"></i>\n</button>\n\n<!-- Variants -->\n<button class="iconbtn iconbtn--filled" aria-label="新規"><i data-lucide="plus"></i></button>\n<button class="iconbtn iconbtn--danger" aria-label="削除"><i data-lucide="trash-2"></i></button>' } },
 
   /* ════════ Core / Components — Inputs & Selection ════════ */
-  'core/components-inputs/text-field':    { template: 'component', title: 'Text Field',          description: 'テキスト・検索・数値入力。IME 配慮済み（旧 Input）。',                                                          preview: 'preview/components-inputs.html',                                                                      spec: 'components/input.spec.md',            a11y: 'label 必須、placeholder で代用しない。IME 入力中はフィルタ抑制。' },
-  'core/components-inputs/toggle-switch': { template: 'component', title: 'Toggle Switch',       description: '即時反映の二値スイッチ。設定の ON/OFF など、適用に確認を要さない操作向け。',                                          preview: 'preview/components-toggle-switch.html',                 spec: null,                                  a11y: '<code>role="switch"</code> + <code>aria-checked</code>。色だけに依存せず、状態をラベルでも示す。' },
-  'core/components-inputs/checkbox':      { template: 'component', title: 'Checkbox',            description: '複数選択可能な独立した選択肢。確定操作（Save / Apply）と組で用いる。',                                              preview: 'preview/components-checkbox.html',                             spec: null,                                  a11y: 'ネイティブ <code>&lt;input type="checkbox"&gt;</code> 推奨。<code>aria-checked="mixed"</code> で不確定状態。' },
-  'core/components-inputs/radio-button':  { template: 'component', title: 'Radio Button',        description: '排他的な選択肢。2–5 個程度。それ以上は Select / Picker を検討。',                                                  preview: 'preview/components-radio-button.html',                   spec: null,                                  a11y: 'ネイティブ <code>&lt;input type="radio"&gt;</code> + 共通 name。<code>&lt;fieldset&gt;</code> でグループ化。' },
-  'core/components-inputs/picker':        { template: 'component', title: 'Date / Time Picker',  description: '日付・時刻の選択 UI。直接入力とポップオーバーの併用が原則。',                                                    preview: 'preview/components-picker.html',             spec: null,                                  a11y: 'キーボードのみで全選択操作可能に。<code>aria-haspopup="dialog"</code>。和暦/西暦の切替に配慮。' },
-  'core/components-inputs/form-group':    { template: 'component', title: 'Form Group',          description: '関連する入力をまとめる構造体。ラベル・補助文・エラー文の規約。',                                                  preview: 'preview/components-form-group.html',                       spec: null,                                  a11y: '<code>&lt;fieldset&gt;</code> + <code>&lt;legend&gt;</code>。エラーは <code>aria-describedby</code> で関連付け。' },
+  'core/components-inputs/text-field':    { template: 'component', title: 'Text Field',          description: 'テキスト・検索・数値入力。IME 配慮済み（旧 Input）。',                                                          preview: 'preview/components-inputs.html',                                                                      spec: 'components/input.spec.md',            a11y: { default: 'label 必須、placeholder で代用しない。IME 入力中はフィルタ抑制。', admin: 'label 必須、placeholder で代用しない。<strong>キーボードショートカット (Tab / Shift+Tab)</strong> で迅速な入力切替。IME 入力中はフィルタ抑制。', consumer: 'label 必須、placeholder で代用しない。<strong>キーボード表示時の入力フィールド可視性を保つ</strong>（scroll-padding-bottom）。IME 入力中はフィルタ抑制。', terminal: 'label 必須、placeholder で代用しない。<strong>大型フォントと太いフォーカスリング（4px 以上）</strong>で視認性を確保。' }, code: { default: '<label for="dep">出発地</label>\n<input id="dep" class="input" type="search" placeholder="バス停を選択">', terminal: '<!-- terminal: 大型タッチエリア + 高コントラスト（min-height: 56px） -->\n<label for="dep" class="label label--large">出発地</label>\n<input id="dep" class="input input--large" type="search" placeholder="バス停を選択">' } },
+  'core/components-inputs/toggle-switch': { template: 'component', title: 'Toggle Switch',       description: '即時反映の二値スイッチ。設定の ON/OFF など、適用に確認を要さない操作向け。',                                          preview: 'preview/components-toggle-switch.html',                 spec: 'components/toggle-switch.spec.md',                                  a11y: { default: '<code>role="switch"</code> + <code>aria-checked</code>。色だけに依存せず、状態をラベルでも示す。', admin: '<code>role="switch"</code> + <code>aria-checked</code>。<strong>Space キーでトグル</strong>。状態をラベル文言でも明示。', consumer: '<code>role="switch"</code> + <code>aria-checked</code>。<strong>タッチ領域 36×36 以上</strong>。', terminal: '<strong>誤操作防止のため確認ダイアログ併用</strong>を検討（重要設定）。状態を色 + ラベルで二重表現。' }, code: { default: '<label class="switch" role="switch">\n  <input type="checkbox" checked aria-label="通知を受け取る">\n  <span class="switch__slider"></span>\n</label>' } },
+  'core/components-inputs/checkbox':      { template: 'component', title: 'Checkbox',            description: '複数選択可能な独立した選択肢。確定操作（Save / Apply）と組で用いる。',                                              preview: 'preview/components-checkbox.html',                             spec: 'components/checkbox.spec.md',                                  a11y: { default: 'ネイティブ <code>&lt;input type="checkbox"&gt;</code> 推奨。<code>aria-checked="mixed"</code> で不確定状態。', admin: 'ネイティブ <code>&lt;input type="checkbox"&gt;</code> 推奨。<strong>Space キーでトグル</strong>。<code>aria-checked="mixed"</code> で不確定状態。', consumer: '<strong>タッチ領域 36×36 以上</strong>を担保（チェック本体は小さくても）。<code>aria-checked="mixed"</code> で不確定状態。', terminal: '<strong>タッチ領域 48×48 以上 + 高コントラスト</strong>。チェックマークは太字に。' }, code: { default: '<label class="check">\n  <input type="checkbox" checked>\n  <span class="check__box"><i data-lucide="check"></i></span>\n  <span class="check__label">利用規約に同意する</span>\n</label>' } },
+  'core/components-inputs/radio-button':  { template: 'component', title: 'Radio Button',        description: '排他的な選択肢。2–5 個程度。それ以上は Select / Picker を検討。',                                                  preview: 'preview/components-radio-button.html',                   spec: 'components/radio-button.spec.md',                                  a11y: { default: 'ネイティブ <code>&lt;input type="radio"&gt;</code> + 共通 name。<code>&lt;fieldset&gt;</code> でグループ化。', admin: 'ネイティブ <code>&lt;input type="radio"&gt;</code> + 共通 name。<strong>Arrow キーで選択移動</strong>可能。<code>&lt;fieldset&gt;</code> でグループ化。', consumer: '<strong>タッチ領域 36×36 以上</strong>。選択肢は 2–5 個に絞る。', terminal: '<strong>タッチ領域 48×48 以上 + カード型表現</strong>を検討（業務エラー防止）。' }, code: { default: '<fieldset>\n  <legend>支払い方法を選択</legend>\n  <label class="radio">\n    <input type="radio" name="pay" checked>\n    <span class="radio__circle"></span>\n    <span class="radio__label">IC カード</span>\n  </label>\n  <label class="radio">\n    <input type="radio" name="pay">\n    <span class="radio__circle"></span>\n    <span class="radio__label">現金</span>\n  </label>\n</fieldset>' } },
+  'core/components-inputs/picker':        { template: 'component', title: 'Date / Time Picker',  description: '日付・時刻の選択 UI。直接入力とポップオーバーの併用が原則。',                                                    preview: 'preview/components-picker.html',             spec: 'components/picker.spec.md',                                  a11y: { default: 'キーボードのみで全選択操作可能に。<code>aria-haspopup="dialog"</code>。和暦/西暦の切替に配慮。', admin: '<strong>キーボードのみで全選択操作可能</strong>（Arrow / Home / End / PageUp / PageDown）。直接入力も併設。<code>aria-haspopup="dialog"</code>。', consumer: 'ドラム式選択 + 直接入力の併用。<code>aria-haspopup="dialog"</code>。和暦/西暦の切替を <code>radiogroup</code> で。', terminal: '<strong>タッチターゲット拡大（最低 56px）</strong>と、誤タップ防止のための確定ボタン明示。<code>aria-haspopup="dialog"</code>。' }, code: { default: '<div class="field" role="combobox" aria-haspopup="dialog" aria-expanded="false" tabindex="0">\n  <i data-lucide="calendar"></i>\n  <span class="field__value">2026年5月18日（月）</span>\n  <i data-lucide="chevron-down" class="field__caret"></i>\n</div>\n<!-- 展開時はカレンダー dialog を別途レンダ -->' } },
+  'core/components-inputs/form-group':    { template: 'component', title: 'Form Group',          description: '関連する入力をまとめる構造体。ラベル・補助文・エラー文の規約。',                                                  preview: 'preview/components-form-group.html',                       spec: 'components/form-group.spec.md',                                  a11y: '<code>&lt;fieldset&gt;</code> + <code>&lt;legend&gt;</code>。エラーは <code>aria-describedby</code> で関連付け。', code: { default: '<div class="form-group">\n  <label class="form-group__label" for="email">メールアドレス<span class="form-group__required">*必須</span></label>\n  <input id="email" type="email" class="input" aria-describedby="email-help">\n  <div class="form-group__help" id="email-help">ログイン ID として使用します</div>\n</div>\n<div class="form-group">\n  <label class="form-group__label" for="pass">パスワード</label>\n  <input id="pass" type="password" class="input input--error" aria-invalid="true" aria-describedby="pass-err">\n  <div class="form-group__error" id="pass-err">8 文字以上、英数字を含めてください</div>\n</div>' } },
 
   /* ════════ Core / Components — Data Display & Communication ════════ */
-  'core/components-data/table':       { template: 'component', title: 'Table',           description: '構造化データの一覧表示。ソート・絞り込み・ページネーションを併設。',                                            preview: 'preview/components-table.html',                                   spec: null,                                  a11y: '<code>&lt;th scope&gt;</code> 必須。並べ替え状態は <code>aria-sort</code>。レスポンシブで横スクロール許容。' },
-  'core/components-data/list':        { template: 'component', title: 'List',            description: '垂直スタックの1行原子（List Item）。Navigation / Selection / Action / Info の4用途。',                          preview: 'preview/components-list-rows.html',                                                                   spec: 'components/list-item.spec.md',        a11y: '必ず <code>&lt;button&gt;</code> か <code>&lt;a&gt;</code> で実装。<code>&lt;div onClick&gt;</code> 禁止。' },
-  'core/components-data/card':        { template: 'component', title: 'Card',            description: '慈愛のやわらかさを 16px 角丸で表現。Hero は 28px。',                                                              preview: 'preview/components-bus-card.html',                                                                    spec: 'components/card.spec.md',             a11y: 'interactive 時は <code>&lt;button&gt;</code>/<code>&lt;a&gt;</code> で実装。<code>&lt;div onClick&gt;</code> は禁止。' },
-  'core/components-data/accordion':   { template: 'component', title: 'Accordion',       description: '見出しと折り畳まれた本文の集合。FAQ・補助情報の段階的開示。',                                                    preview: 'preview/components-accordion.html',                           spec: null,                                  a11y: '<code>&lt;button aria-expanded&gt;</code> + <code>aria-controls</code>。展開部に <code>region</code> ロール。' },
-  'core/components-data/alert':       { template: 'component', title: 'Alert / Banner',  description: '画面内に永続的に表示する重要メッセージ。Toast と異なり自動消失しない。',                                          preview: 'preview/components-alert.html',                    spec: null,                                  a11y: '重要度に応じて <code>role="alert"</code> または <code>role="status"</code>。閉じるは Esc 対応。' },
-  'core/components-data/toast':       { template: 'component', title: 'Toast / Snackbar', description: '操作中断なしの一時的通知。重大エラーは Modal を使う。',                                                          preview: 'preview/components-toast.html',                  spec: 'components/toast.spec.md',            a11y: '<code>role="status"</code> / <code>"alert"</code>、<code>aria-live</code> の使い分け。' },
-  'core/components-data/modal':       { template: 'component', title: 'Modal / Dialog',  description: '注意を画面全体から奪う、取消困難な操作の確認。',                                                                 preview: 'preview/components-modal.html',                    spec: 'components/modal.spec.md',            a11y: '<code>role="dialog"</code> + フォーカストラップ + Escape ハンドラ。' },
-  'core/components-data/badge':       { template: 'component', title: 'Badge',           description: '数値・状態を伴う小さな付箋。他要素にアンカーして注意を喚起。',                                                    preview: 'preview/components-badge.html',                                   spec: null,                                  a11y: '数値のみのバッジは <code>aria-label="未読 3 件"</code> 等で意味を補う。色だけに依存しない。' },
-  'core/components-data/status-pill': { template: 'component', title: 'Status Pill',     description: '運行状態を一目で伝えるアイコン + ラベル（FIG 独自）。Badge の意味的特化形。',                                            preview: 'preview/components-status-pills.html',                                                                spec: 'components/status-pill.spec.md',      a11y: '色だけで意味を伝えない。<code>role="status"</code> + <code>aria-live</code>。' },
-  'core/components-data/icon-bubble': { template: 'component', title: 'Icon Bubble',     description: '装飾的アイコンコンテナ。インタラクティブにしない。',                                                            preview: 'preview/components-icon-bubble.html',                     spec: 'components/icon-bubble.spec.md',      a11y: '既定で <code>aria-hidden="true"</code>。意味は親要素で集約表現。' },
+  'core/components-data/table':       { template: 'component', title: 'Table',           description: '構造化データの一覧表示。ソート・絞り込み・ページネーションを併設。',                                            preview: 'preview/components-table.html',                                   spec: 'components/table.spec.md',                                  a11y: { default: '<code>&lt;th scope&gt;</code> 必須。並べ替え状態は <code>aria-sort</code>。レスポンシブで横スクロール許容。', admin: '<code>&lt;th scope&gt;</code> 必須。並べ替えは <code>aria-sort</code>。<strong>キーボードでセル間 (Arrow キー)、行選択 (Space)</strong> 操作可能に。', consumer: '狭幅では <strong>カードリストへの代替表示</strong>を検討。横スクロール時は <code>aria-label</code> でスクロール可能であることを示す。', terminal: 'Terminal プロファイルでは <strong>Table の使用を避ける</strong>。代替として List + 詳細パネル、もしくは Card グリッドを使用。' }, availability: { admin: 'recommended', consumer: 'caution', terminal: 'avoid' }, code: { default: '<div class="table-scroll">\n  <table>\n    <thead>\n      <tr>\n        <th scope="col">路線名</th>\n        <th scope="col" aria-sort="ascending">便数</th>\n        <th scope="col">状態</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr><td>渋谷 — 新宿 線</td><td>48</td><td><span class="pill pill--success">運行中</span></td></tr>\n      <tr><td>渋谷 — 池袋 線</td><td>32</td><td><span class="pill pill--warn">遅延</span></td></tr>\n    </tbody>\n  </table>\n</div>' } },
+  'core/components-data/list':        { template: 'component', title: 'List',            description: '垂直スタックの1行原子（List Item）。Navigation / Selection / Action / Info の4用途。',                          preview: 'preview/components-list-rows.html',                                                                   spec: 'components/list-item.spec.md',        a11y: '必ず <code>&lt;button&gt;</code> か <code>&lt;a&gt;</code> で実装。<code>&lt;div onClick&gt;</code> 禁止。', code: { default: '<a href="#" class="list-row">\n  <span class="bubble bubble--brand" aria-hidden="true">\n    <i data-lucide="bell"></i>\n  </span>\n  <div class="list-row__body">\n    <div class="list-row__title">通知設定</div>\n    <div class="list-row__desc">プッシュ通知の頻度</div>\n  </div>\n  <i data-lucide="chevron-right" class="list-row__caret" aria-hidden="true"></i>\n</a>' } },
+  'core/components-data/card':        { template: 'component', title: 'Card',            description: '慈愛のやわらかさを 16px 角丸で表現。Hero は 28px。',                                                              preview: 'preview/components-bus-card.html',                                                                    spec: 'components/card.spec.md',             a11y: 'interactive 時は <code>&lt;button&gt;</code>/<code>&lt;a&gt;</code> で実装。<code>&lt;div onClick&gt;</code> は禁止。', code: { default: '<article class="card">\n  <header class="card__header">\n    <h3 class="card__title">渋谷駅前</h3>\n    <span class="pill pill--success">運行中</span>\n  </header>\n  <p class="card__desc">次のバスまで あと 3 分</p>\n  <footer class="card__footer">\n    <button class="card__action">詳細を見る</button>\n  </footer>\n</article>' } },
+  'core/components-data/accordion':   { template: 'component', title: 'Accordion',       description: '見出しと折り畳まれた本文の集合。FAQ・補助情報の段階的開示。',                                                    preview: 'preview/components-accordion.html',                           spec: 'components/accordion.spec.md',                                  a11y: '<code>&lt;button aria-expanded&gt;</code> + <code>aria-controls</code>。展開部に <code>region</code> ロール。', code: { default: '<details class="accordion">\n  <summary class="accordion__summary">\n    <i data-lucide="bell" class="icon"></i>\n    <span>通知設定</span>\n    <i data-lucide="chevron-down" class="chevron"></i>\n  </summary>\n  <div class="accordion__content">\n    <p>運行情報のプッシュ通知、メール通知、SMS 通知の頻度と種類を制御できます。</p>\n  </div>\n</details>' } },
+  'core/components-data/alert':       { template: 'component', title: 'Alert / Banner',  description: '画面内に永続的に表示する重要メッセージ。Toast と異なり自動消失しない。',                                          preview: 'preview/components-alert.html',                    spec: 'components/alert.spec.md',                                  a11y: '重要度に応じて <code>role="alert"</code> または <code>role="status"</code>。閉じるは Esc 対応。', code: { default: '<div class="alert alert--warning" role="status">\n  <div class="alert__icon"><i data-lucide="alert-triangle"></i></div>\n  <div class="alert__body">\n    <p class="alert__title">遅延の可能性があります</p>\n    <p class="alert__desc">渋谷駅周辺で道路工事が予定されています。</p>\n  </div>\n  <button class="alert__close" aria-label="閉じる"><i data-lucide="x"></i></button>\n</div>' } },
+  'core/components-data/toast':       { template: 'component', title: 'Toast / Snackbar', description: '操作中断なしの一時的通知。重大エラーは Modal を使う。',                                                          preview: 'preview/components-toast.html',                  spec: 'components/toast.spec.md',            a11y: '<code>role="status"</code> / <code>"alert"</code>、<code>aria-live</code> の使い分け。', code: { default: '<div class="toast" role="status" aria-live="polite">\n  <span class="toast__icon"><i data-lucide="check"></i></span>\n  <div class="toast__body">予約をキャンセルしました</div>\n  <a href="#" class="toast__action">元に戻す</a>\n  <button class="toast__close" aria-label="閉じる"><i data-lucide="x"></i></button>\n</div>' } },
+  'core/components-data/modal':       { template: 'component', title: 'Modal / Dialog',  description: '注意を画面全体から奪う、取消困難な操作の確認。',                                                                 preview: 'preview/components-modal.html',                    spec: 'components/modal.spec.md',            a11y: { default: '<code>role="dialog"</code> + フォーカストラップ + Escape ハンドラ。', admin: '<code>role="dialog"</code> + フォーカストラップ + <strong>Esc キー</strong>で閉じる。タイトルへ <code>aria-labelledby</code>。', consumer: '<code>role="dialog"</code> + フォーカストラップ。Esc に加え、<strong>スワイプダウン</strong>での閉じる動線を提供。', terminal: '<code>role="dialog"</code> + フォーカストラップ。閉じるボタンは 56×56 px 以上、<strong>誤操作防止のため 2-step 確認</strong>を検討。' }, code: { admin: '<!-- admin: 中央配置・固定幅（max-width: 420px） -->\n<dialog class="modal modal--centered" aria-labelledby="m-title" aria-modal="true">\n  <header class="modal__header">\n    <h2 id="m-title">変更を保存しますか?</h2>\n    <button class="modal__close" aria-label="閉じる">×</button>\n  </header>\n  <div class="modal__body">未保存の変更があります。</div>\n  <footer class="modal__footer">\n    <button class="btn btn--secondary">破棄</button>\n    <button class="btn btn--primary">保存する</button>\n  </footer>\n</dialog>', consumer: '<!-- consumer: フルスクリーン（親指操作）。CTA は底部に固定 -->\n<dialog class="modal modal--fullscreen" aria-labelledby="m-title" aria-modal="true">\n  <header class="modal__header">\n    <h2 id="m-title">変更を保存しますか?</h2>\n    <button class="modal__close" aria-label="閉じる">×</button>\n  </header>\n  <div class="modal__body">未保存の変更があります。</div>\n  <footer class="modal__footer">\n    <button class="btn btn--primary btn--full">保存する</button>\n  </footer>\n</dialog>', terminal: '<!-- terminal: 大型 CTA、ボタンを縦並びに（誤タップ防止） -->\n<dialog class="modal modal--centered modal--terminal" aria-labelledby="m-title" aria-modal="true">\n  <h2 id="m-title">操作の確認</h2>\n  <div class="modal__body">この設定を適用しますか?</div>\n  <footer class="modal__footer modal__footer--stack">\n    <button class="btn btn--primary btn--large">適用する</button>\n    <button class="btn btn--secondary btn--large">キャンセル</button>\n  </footer>\n</dialog>' } },
+  'core/components-data/badge':       { template: 'component', title: 'Badge',           description: '数値・状態を伴う小さな付箋。他要素にアンカーして注意を喚起。',                                                    preview: 'preview/components-badge.html',                                   spec: 'components/badge.spec.md',                                  a11y: '数値のみのバッジは <code>aria-label="未読 3 件"</code> 等で意味を補う。色だけに依存しない。', code: { default: '<!-- 単独配置 -->\n<span class="badge badge--success">承認済</span>\n<span class="badge badge--warning">要確認</span>\n\n<!-- アンカー型（カウント） -->\n<div class="anchor">\n  <div class="anchor__host"><i data-lucide="bell"></i></div>\n  <span class="badge--count" aria-label="未読 3 件">3</span>\n</div>' } },
+  'core/components-data/status-pill': { template: 'component', title: 'Status Pill',     description: '運行状態を一目で伝えるアイコン + ラベル（FIG 独自）。Badge の意味的特化形。',                                            preview: 'preview/components-status-pills.html',                                                                spec: 'components/status-pill.spec.md',      a11y: '色だけで意味を伝えない。<code>role="status"</code> + <code>aria-live</code>。', code: { default: '<span class="pill pill--success" role="status">\n  <i data-lucide="circle" style="width:8px;height:8px;fill:currentColor" aria-hidden="true"></i>\n  運行中\n</span>\n<span class="pill pill--warn" role="status">\n  <i data-lucide="circle" style="width:8px;height:8px;fill:currentColor" aria-hidden="true"></i>\n  遅延の可能性\n</span>' } },
+  'core/components-data/icon-bubble': { template: 'component', title: 'Icon Bubble',     description: '装飾的アイコンコンテナ。インタラクティブにしない。',                                                            preview: 'preview/components-icon-bubble.html',                     spec: 'components/icon-bubble.spec.md',      a11y: '既定で <code>aria-hidden="true"</code>。意味は親要素で集約表現。', code: { default: '<span class="bubble bubble--md bubble--brand" aria-hidden="true">\n  <i data-lucide="zap"></i>\n</span>\n\n<!-- リスト行内での使用 -->\n<a href="#" class="list-row">\n  <span class="bubble bubble--sm bubble--brand" aria-hidden="true">\n    <i data-lucide="bell"></i>\n  </span>\n  <span>通知設定</span>\n</a>' } },
 
   /* ════════ Core / Experience Patterns ════════ */
   'core/patterns/transition-budget':  { template: 'pattern', title: 'Transition Budget',  description: '体感速度バジェット（200ms 以内）の規約。',           preview: 'preview/motion-budget.html',    spec: 'patterns/transition-budget.md',  a11y: 'reduced-motion で全モーション 0.01ms に自動停止。' },
@@ -494,6 +639,23 @@ const PAGES = {
     body: `
       <p>Busapp の対話プロトタイプ。地域選択 → ホーム → 路線詳細 → 決済のフルフローを React コンポーネントで構成。Core で定義されたトークン・部品・パターンの統合事例として参照できます。</p>
       <p><strong>※</strong> 本ポータルとはレイアウトが異なるため、iframe ではなく <em>別タブで開く</em> 構成です。</p>
+    `,
+  },
+
+  /* ════════ Extensions / llocana (Mobile-Consumer) ════════ */
+  'extensions/llocana/overview': {
+    template: 'principle',
+    title: 'バス運行情報・通知機能 — Overview',
+    description: 'バス運行情報と通知機能を備えたモバイルWebアプリ。',
+    body: `
+      <p>Mobile-Consumer 向けに設計されたバス運行情報アプリ。基本機能として運行状況確認、遅延通知、および乗車案内を提供します。</p>
+      <h3>このプロジェクトの位置づけ</h3>
+      <p>FIG Core のトークンとコンポーネントを尊重しつつ、サービス固有のシグネチャーカラーと Mobile-Consumer プロファイルを適用した実装基盤です。</p>
+      <ul>
+        <li>シグネチャー: Deep Turquoise (#1A8589)</li>
+        <li>プロファイル: Mobile-Consumer</li>
+        <li>対象: バス運行情報と通知機能を備えたモバイルWebアプリ</li>
+      </ul>
     `,
   },
 
@@ -634,6 +796,325 @@ document.body.classList.add('fig-profile-' + selected);</code></pre>
       </ul>
     `,
   },
+  'developer/guide/asset-reference': {
+    template: 'principle',
+    title: 'Asset Reference（資産地図）',
+    description: 'リポジトリ直下の全資産を「役割・改変可否・消費方法」で一覧化。Core 不変点・サンプル・参照のみの境界を可視化。',
+    body: `
+      <style>
+        .fig-asset-table { width: 100%; border-collapse: collapse; margin: var(--fig-spacing-m, 16px) 0; font-size: var(--fig-size-caption, 13px); }
+        .fig-asset-table th, .fig-asset-table td { border: 1px solid var(--color-border-subtle, #e1e3e6); padding: 8px 10px; text-align: left; vertical-align: top; }
+        .fig-asset-table thead th { background: var(--color-surface-subtle, #f7f8f9); font-weight: 600; white-space: nowrap; }
+        .fig-asset-table code { font-size: 11.5px; white-space: nowrap; }
+        .fig-asset-table .mut-no    { color: #b91c1c; font-weight: 600; white-space: nowrap; }
+        .fig-asset-table .mut-copy  { color: #b45309; font-weight: 600; white-space: nowrap; }
+        .fig-asset-table .mut-fork  { color: #15803d; font-weight: 600; white-space: nowrap; }
+        .fig-asset-table .mut-ref   { color: #6b7280; font-weight: 600; white-space: nowrap; }
+        .fig-asset-row-group td { background: var(--color-surface-subtle, #f7f8f9); font-weight: 600; }
+      </style>
+
+      <h3>このページは何のためにある？</h3>
+      <p>本ポータルが提供する各ファイルが「<strong>何のためにあるのか</strong>・<strong>触っていいのか</strong>・<strong>外部リポジトリでどう消費するのか</strong>」を 1 ページに集約しています。新規プロジェクトを <code>extensions/</code> 配下に複製する場合も、既存リポジトリから引用する場合も、まずこのページで「<strong>持ち帰っていい資産</strong>」と「<strong>参照のみの資産</strong>」を区別してください。</p>
+
+      <h3>凡例</h3>
+      <ul>
+        <li><span class="mut-no">❌ 改変禁止</span> — Core Maintainer のみ変更可。<code>&lt;link&gt;</code> / <code>@import</code> で参照する。</li>
+        <li><span class="mut-copy">📋 コピー前提</span> — 雛形として複製して使う。複製先で自由に編集可。</li>
+        <li><span class="mut-fork">🌿 フォーク歓迎</span> — 自プロジェクトに合わせて拡張・上書きすることを想定。</li>
+        <li><span class="mut-ref">👀 参照のみ</span> — 仕様書・データ定義。直接の読み込みは不要。</li>
+      </ul>
+
+      <h3>資産一覧</h3>
+      <table class="fig-asset-table">
+        <thead>
+          <tr><th>パス</th><th>役割</th><th>改変</th><th>外部リポでの消費方法</th></tr>
+        </thead>
+        <tbody>
+          <tr class="fig-asset-row-group"><td colspan="4">① 原子トークン層（不変）</td></tr>
+          <tr>
+            <td><code>primitives.css</code></td>
+            <td>FIG ブランドの原子トークン。色・タイポ・スペーシング・elevation。生 hex / 生 px の唯一の正典。</td>
+            <td class="mut-no">❌</td>
+            <td><code>&lt;link rel="stylesheet" href="…/primitives.css"&gt;</code> または <code>@import</code>。最初に読み込む。</td>
+          </tr>
+          <tr>
+            <td><code>semantic.css</code></td>
+            <td>原子トークンを「役割」に再マッピング（<code>--color-surface-brand</code>, <code>--color-text-primary</code> など）。コンポーネントが直接参照する層。</td>
+            <td class="mut-no">❌</td>
+            <td>primitives.css の直後に読み込む。</td>
+          </tr>
+
+          <tr class="fig-asset-row-group"><td colspan="4">② Signature 派生層</td></tr>
+          <tr>
+            <td><code>tokens/signature.css</code></td>
+            <td><code>--color-signature</code> から <code>-light</code> / <code>-dark</code> / <code>-tint</code> / <code>-shadow</code> を <code>color-mix()</code> で自動生成。</td>
+            <td class="mut-no">❌</td>
+            <td>semantic.css の直後に読み込む。自プロジェクトで <code>:root { --color-signature: #...; }</code> を別途宣言。</td>
+          </tr>
+          <tr>
+            <td><code>tokens/signature-presets.json</code></td>
+            <td>Hue × Taste マトリクスの正典定義。15 プリセット + メタ情報。</td>
+            <td class="mut-ref">👀</td>
+            <td>読込不要。仕様参照のみ（プリセット選択時の参考）。</td>
+          </tr>
+          <tr>
+            <td><code>tokens/project-settings.schema.json</code></td>
+            <td><code>project-settings.json</code> の JSON Schema。enum バリデーション付き。</td>
+            <td class="mut-ref">👀</td>
+            <td>IDE 補完用。<code>$schema</code> プロパティから相対参照。</td>
+          </tr>
+
+          <tr class="fig-asset-row-group"><td colspan="4">③ デバイスプロファイル可変層</td></tr>
+          <tr>
+            <td><code>tokens/base.css</code></td>
+            <td><code>--fig-*</code> セマンティックトークンの既定値（Consumer 相当）。</td>
+            <td class="mut-no">❌</td>
+            <td>signature.css の後に読み込む。</td>
+          </tr>
+          <tr>
+            <td><code>tokens/profile-admin.css</code><br><code>tokens/profile-consumer.css</code><br><code>tokens/profile-terminal.css</code></td>
+            <td>デバイスプロファイル別の上書き層。<code>body.fig-profile-{admin|consumer|terminal}</code> セレクタで切替。</td>
+            <td class="mut-no">❌</td>
+            <td>3 ファイル全部を読み込み、<code>&lt;body&gt;</code> のクラスで適用先を選択。</td>
+          </tr>
+
+          <tr class="fig-asset-row-group"><td colspan="4">④ 部品サンプル / 雛形</td></tr>
+          <tr>
+            <td><code>tokens/components.css</code></td>
+            <td>Core 部品（<code>.fig-button</code> / <code>.fig-card</code> / <code>.fig-input</code> など）の見本実装。</td>
+            <td class="mut-copy">📋</td>
+            <td>(a) そのまま読み込んで利用、または (b) 必要な部品のみコピーして自プロジェクトの CSS に取り込む。<code>.fig-*</code> セレクタの上書きは禁止。</td>
+          </tr>
+          <tr>
+            <td><code>extensions/template/</code></td>
+            <td>新規プロジェクトのスターター。<code>project-settings.json</code> / <code>index.html</code> / <code>styles/extensions.css</code> の組。</td>
+            <td class="mut-copy">📋</td>
+            <td><code>cp -r</code> または <code>Copy-Item -Recurse</code> で複製して使用。複製後は自プロジェクトの所有物。</td>
+          </tr>
+
+          <tr class="fig-asset-row-group"><td colspan="4">⑤ プロジェクト固有層</td></tr>
+          <tr>
+            <td><code>extensions/{project}/styles/extensions.css</code></td>
+            <td><code>--color-signature</code> 宣言 + プロジェクト固有スタイル（<code>.{project}-{component}</code>）。</td>
+            <td class="mut-fork">🌿</td>
+            <td>複製したプロジェクトの自由領域。Core 層を直接書き換えず、ここに追記する。</td>
+          </tr>
+          <tr>
+            <td><code>extensions/{project}/components/</code></td>
+            <td>プロジェクト固有部品の置き場。空の <code>.gitkeep</code> のみ。</td>
+            <td class="mut-fork">🌿</td>
+            <td>同上。</td>
+          </tr>
+
+          <tr class="fig-asset-row-group"><td colspan="4">⑥ ポータル UI（参照のみ）</td></tr>
+          <tr>
+            <td><code>index.html</code><br><code>assets/portal.css</code><br><code>assets/js/portal*.js</code><br><code>assets/js/ai-co-creation.js</code></td>
+            <td>本ポータルサイトの UI / ルーター / フォーム制御。プロダクト側では使わない。</td>
+            <td class="mut-ref">👀</td>
+            <td>外部から読み込まないこと（ポータル専用）。</td>
+          </tr>
+          <tr>
+            <td><code>preview/*.html</code></td>
+            <td>各コンポーネント・トークン・パターンの iframe プレビュー。</td>
+            <td class="mut-ref">👀</td>
+            <td>ポータル内表示専用。外部消費は <code>tokens/components.css</code> 経由で行うこと。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>最小消費セット（外部リポからの導入）</h3>
+      <p>自プロジェクトに FIG Core を後付けで導入する最短経路：</p>
+      <pre class="page-code"><code>&lt;link rel="stylesheet" href="https://your-cdn/fig/primitives.css"&gt;
+&lt;link rel="stylesheet" href="https://your-cdn/fig/semantic.css"&gt;
+&lt;link rel="stylesheet" href="https://your-cdn/fig/tokens/signature.css"&gt;
+&lt;link rel="stylesheet" href="https://your-cdn/fig/tokens/base.css"&gt;
+&lt;link rel="stylesheet" href="https://your-cdn/fig/tokens/profile-consumer.css"&gt;
+&lt;!-- 部品も使う場合のみ追加 --&gt;
+&lt;link rel="stylesheet" href="https://your-cdn/fig/tokens/components.css"&gt;</code></pre>
+      <p>外部消費の具体的な手順（CDN / git submodule / コピー）は <a href="#/developer/guide/integration">Integration Guide</a> を参照。</p>
+
+      <h3>触ってはいけないルール</h3>
+      <ul>
+        <li><span class="mut-no">❌</span> <strong>不変 (❌)</strong> ファイルを自プロジェクトでローカルにコピーして編集しないこと。バージョン追従が壊れる。</li>
+        <li><span class="mut-no">❌</span> <code>.fig-*</code> クラスを上書きしないこと（Core 部品の挙動が壊れる）。</li>
+        <li><span class="mut-no">❌</span> <code>--color-signature-light</code> / <code>-dark</code> / <code>-tint</code> / <code>-shadow</code> を直接定義しないこと（自動派生が壊れる）。</li>
+        <li><span class="mut-copy">📋</span> <strong>コピー前提 (📋)</strong> ファイルを複製した場合、複製先は自プロジェクトの所有物。Core 側の更新は手動で取り込む。</li>
+      </ul>
+    `,
+  },
+
+  'developer/guide/integration': {
+    template: 'principle',
+    title: 'Integration Guide（外部リポへの導入）',
+    description: 'このリポジトリ内に Extension を作るのではなく、別リポジトリから FIG Core を消費したい場合の 3 パスと、それぞれの設定例。',
+    body: `
+      <style>
+        .fig-path-table { width: 100%; border-collapse: collapse; margin: var(--fig-spacing-m, 16px) 0; font-size: var(--fig-size-caption, 13px); }
+        .fig-path-table th, .fig-path-table td { border: 1px solid var(--color-border-subtle, #e1e3e6); padding: 8px 10px; text-align: left; vertical-align: top; }
+        .fig-path-table thead th { background: var(--color-surface-subtle, #f7f8f9); font-weight: 600; }
+        .fig-path-card {
+          padding: var(--fig-spacing-m, 16px);
+          background: var(--color-surface-subtle, #f7f8f9);
+          border: 1px solid var(--color-border-subtle, #e1e3e6);
+          border-radius: var(--fig-radius-card, 12px);
+          margin: var(--fig-spacing-m, 16px) 0;
+        }
+        .fig-path-card h4 { margin-top: 0; }
+        .fig-matrix { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 12px; }
+        .fig-matrix th, .fig-matrix td { border: 1px solid var(--color-border-subtle, #e1e3e6); padding: 6px 8px; text-align: center; }
+        .fig-matrix th:first-child, .fig-matrix td:first-child { text-align: left; white-space: nowrap; }
+      </style>
+
+      <h3>導入パスは 3 つ</h3>
+      <p>「FIG Core をどう取り込むか」の選択肢は 3 つあります。<strong>運用方針・自プロジェクトのビルド体制・更新頻度</strong>で決めてください。</p>
+
+      <table class="fig-path-table">
+        <thead>
+          <tr><th>パス</th><th>誰向け</th><th>更新追従</th><th>初期コスト</th><th>運用コスト</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Path 1</strong>: このリポ内 Extension</td>
+            <td>本リポと一体運用するプロダクト</td>
+            <td>自動（同一リポ）</td>
+            <td>小</td>
+            <td>小</td>
+          </tr>
+          <tr>
+            <td><strong>Path 2</strong>: git submodule / Subtree</td>
+            <td>別リポだが Core と密結合したいプロダクト</td>
+            <td>明示的 (<code>git submodule update</code>)</td>
+            <td>中</td>
+            <td>中（pin 必須）</td>
+          </tr>
+          <tr>
+            <td><strong>Path 3</strong>: CSS コピー / CDN リンク</td>
+            <td>軽量に使いたい / 既存大規模アプリへの後付け</td>
+            <td>手動（バージョン固定）</td>
+            <td>小</td>
+            <td>大（更新は人力）</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>どの資産を取り込む？ — 依存マトリクス</h3>
+      <p>採用レベル別に必要なファイルを示します。詳細は <a href="#/developer/guide/asset-reference">Asset Reference</a> 参照。</p>
+      <table class="fig-matrix">
+        <thead>
+          <tr><th>採用レベル</th><th>primitives</th><th>semantic</th><th>signature</th><th>base</th><th>profile-*</th><th>components</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Lv.1 トークンだけ</td><td>✓</td><td>✓</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+          <tr><td>Lv.2 + Signature 派生</td><td>✓</td><td>✓</td><td>✓</td><td>—</td><td>—</td><td>—</td></tr>
+          <tr><td>Lv.3 + デバイスプロファイル</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td>—</td></tr>
+          <tr><td>Lv.4 + Core 部品</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Path 1 — このリポ内に Extension を新規作成</h3>
+      <div class="fig-path-card">
+        <p>本ポータルが想定する標準パス。<code>extensions/{project}/</code> 配下にディレクトリを切ります。詳細手順は <a href="#/developer/guide/project-duplication">Project Duplication</a> 参照。</p>
+        <p><strong>このパスを選ぶべきケース</strong>:</p>
+        <ul>
+          <li>新規プロダクトをこれから立ち上げる</li>
+          <li>本リポと同一 PR で UI 基盤を進化させたい</li>
+          <li>Core Maintainer と密に連携する想定</li>
+        </ul>
+      </div>
+
+      <h3>Path 2 — git submodule で外部リポから参照</h3>
+      <div class="fig-path-card">
+        <p>外部リポの一区画に FIG Core を埋め込み、<code>&lt;link&gt;</code> パスでローカルファイルとして読みます。バージョン固定は git の commit hash で行います。</p>
+        <p><strong>セットアップ</strong>:</p>
+        <pre class="page-code"><code># 自プロジェクトのルートで実行
+git submodule add &lt;FIG_REPO_URL&gt; vendor/fig
+git submodule update --init --recursive
+cd vendor/fig
+git checkout v1.2.0   # 必ずバージョンを pin
+cd ../..
+git add .gitmodules vendor/fig
+git commit -m "feat: import FIG Core v1.2.0 as submodule"</code></pre>
+        <p><strong>HTML 側の参照</strong>:</p>
+        <pre class="page-code"><code>&lt;link rel="stylesheet" href="/vendor/fig/primitives.css"&gt;
+&lt;link rel="stylesheet" href="/vendor/fig/semantic.css"&gt;
+&lt;link rel="stylesheet" href="/vendor/fig/tokens/signature.css"&gt;
+&lt;link rel="stylesheet" href="/vendor/fig/tokens/base.css"&gt;
+&lt;link rel="stylesheet" href="/vendor/fig/tokens/profile-consumer.css"&gt;
+&lt;link rel="stylesheet" href="/vendor/fig/tokens/components.css"&gt;
+&lt;link rel="stylesheet" href="/styles/my-app.css"&gt;
+&lt;style&gt;:root { --color-signature: #007A7A; }&lt;/style&gt;</code></pre>
+        <p><strong>バージョン更新</strong>:</p>
+        <pre class="page-code"><code>cd vendor/fig
+git fetch
+git checkout v1.3.0
+cd ../..
+git add vendor/fig
+git commit -m "chore: bump FIG Core v1.2.0 → v1.3.0"</code></pre>
+        <p><strong>注意</strong>: <code>vendor/fig/</code> 内のファイルを編集しないこと（pull 時に上書きされる）。カスタマイズは自プロジェクトの CSS で行う。</p>
+      </div>
+
+      <h3>Path 3 — CSS コピー / CDN リンク</h3>
+      <div class="fig-path-card">
+        <p>ビルドツール非対応の既存アプリや、最小フットプリントで FIG を試したい場合に最適。</p>
+        <p><strong>Vite / Next.js 等で <code>@import</code> 利用</strong>:</p>
+        <pre class="page-code"><code>/* src/styles/global.css */
+@import '@fig/core/primitives.css';
+@import '@fig/core/semantic.css';
+@import '@fig/core/tokens/signature.css';
+@import '@fig/core/tokens/base.css';
+@import '@fig/core/tokens/profile-consumer.css';
+
+:root { --color-signature: #007A7A; }</code></pre>
+        <p>(<code>@fig/core</code> は将来 npm パッケージ化を想定したエイリアス名。現状はリポジトリパスを直接指定。)</p>
+
+        <p><strong>静的サイトで CDN リンク</strong>:</p>
+        <pre class="page-code"><code>&lt;!-- 例: jsDelivr 経由でタグ固定（commit hash でも可） --&gt;
+&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/&lt;org&gt;/fig-core@v1.2.0/primitives.css"&gt;
+&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/&lt;org&gt;/fig-core@v1.2.0/semantic.css"&gt;
+&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/&lt;org&gt;/fig-core@v1.2.0/tokens/signature.css"&gt;
+&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/&lt;org&gt;/fig-core@v1.2.0/tokens/base.css"&gt;
+&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/&lt;org&gt;/fig-core@v1.2.0/tokens/profile-consumer.css"&gt;</code></pre>
+
+        <p><strong>最終手段: ファイルをコピー</strong></p>
+        <ul>
+          <li>更新追従が完全に手動になる。Core 改版時に取り直す必要がある</li>
+          <li>「<a href="#/developer/guide/version-management">Version Management</a>」のチェンジログを購読すること</li>
+        </ul>
+      </div>
+
+      <h3>共通: <code>--color-signature</code> の上書き</h3>
+      <p>どの Path でも、自プロジェクトの最後の CSS に以下 1 行を追加してください（詳細は <a href="#/core/foundations/color-system">Color System & Palette</a> §4 参照）。</p>
+      <pre class="page-code"><code>:root {
+  --color-signature: #007A7A;   /* プロダクト識別色 */
+}</code></pre>
+
+      <h3>共通: <code>&lt;body&gt;</code> のプロファイルクラス</h3>
+      <p>3 プロファイル CSS を読み込んだ後、<code>&lt;body&gt;</code>（または最上位コンテナ）にプロファイルクラスを 1 つ付与します:</p>
+      <pre class="page-code"><code>&lt;body class="fig-profile-consumer"&gt;
+&lt;!-- or --&gt;
+&lt;body class="fig-profile-admin"&gt;
+&lt;body class="fig-profile-terminal"&gt;</code></pre>
+
+      <h3>採用後のチェックリスト</h3>
+      <ul>
+        <li>☐ 読込順が <code>primitives → semantic → signature → base → profile-* → (components) → 自プロジェクト CSS</code> である</li>
+        <li>☐ <code>:root { --color-signature: #...; }</code> が自プロジェクト CSS の冒頭にある</li>
+        <li>☐ <code>&lt;body&gt;</code> に <code>fig-profile-*</code> クラスが付いている</li>
+        <li>☐ <code>.fig-*</code> セレクタを上書きしていない</li>
+        <li>☐ <code>--color-signature-light/dark/tint/shadow</code> を直接定義していない</li>
+        <li>☐ FIG のバージョンを明示的に pin している（submodule の commit hash / CDN の tag）</li>
+        <li>☐ <a href="#/developer/guide/version-management">Version Management</a> の Breaking Change 通知フローを購読している</li>
+      </ul>
+
+      <h3>関連</h3>
+      <ul>
+        <li><a href="#/developer/guide/asset-reference">Asset Reference</a> — どのファイルが何か（持ち帰っていい資産 / 参照のみ）</li>
+        <li><a href="#/developer/guide/project-duplication">Project Duplication</a> — Path 1 の詳細手順</li>
+        <li><a href="#/developer/guide/version-management">Version Management</a> — semver と pinning</li>
+      </ul>
+    `,
+  },
+
   'developer/guide/version-management': {
     template: 'principle',
     title: 'Version Management',
@@ -799,7 +1280,64 @@ find . -name "*.css" -exec sed -i 's/--fig-spacing-/--fig-gap-/g' {} +</code></p
     title: 'Project Duplication',
     description: 'Extensions層に新規プロジェクトを立ち上げるための完全手順。',
     body: `
-      <p>新しいプロダクトを Extensions層に追加するためのスキャフォルディング手順です。所要時間: 約 20 分。</p>
+      <style>
+        .fig-path-picker { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--fig-spacing-m, 16px); margin: var(--fig-spacing-m, 16px) 0; }
+        .fig-path-picker__card {
+          padding: var(--fig-spacing-m, 16px);
+          background: var(--color-surface-subtle, #f7f8f9);
+          border: 1px solid var(--color-border-subtle, #e1e3e6);
+          border-radius: var(--fig-radius-card, 12px);
+          display: flex; flex-direction: column; gap: 8px;
+        }
+        .fig-path-picker__card[data-current="true"] {
+          border-color: var(--color-border-brand, #1A8589);
+          border-width: 2px;
+          background: var(--color-surface-base, #ffffff);
+        }
+        .fig-path-picker__badge {
+          align-self: flex-start;
+          font-size: 11px; font-weight: 600;
+          padding: 2px 8px; border-radius: 999px;
+          background: var(--color-surface-base, #ffffff);
+          color: var(--color-text-subtle, #6b7280);
+          border: 1px solid var(--color-border-subtle, #e1e3e6);
+        }
+        .fig-path-picker__card[data-current="true"] .fig-path-picker__badge {
+          background: var(--color-surface-brand, #1A8589);
+          color: var(--color-text-onBrand, #ffffff);
+          border-color: transparent;
+        }
+        .fig-path-picker__title { font-weight: 700; font-size: var(--fig-size-body, 14px); }
+        .fig-path-picker__hint  { font-size: 12px; color: var(--color-text-subtle, #6b7280); }
+        .fig-path-picker__cta a { font-weight: 600; }
+        @media (max-width: 720px) { .fig-path-picker { grid-template-columns: 1fr; } }
+      </style>
+
+      <h3>STEP 0 — どの導入パス？</h3>
+      <p>FIG Core を取り込む方法は 3 つあります。<strong>本ページは Path 1（このリポ内に Extension を作る）の手順です</strong>。別リポからの導入や軽量採用を考えている場合は <a href="#/developer/guide/integration">Integration Guide</a> へ。</p>
+      <div class="fig-path-picker">
+        <div class="fig-path-picker__card" data-current="true">
+          <span class="fig-path-picker__badge">本ページ</span>
+          <div class="fig-path-picker__title">Path 1<br>このリポ内 Extension</div>
+          <p class="fig-path-picker__hint">本ポータルと一体運用するプロダクト。<code>extensions/{name}/</code> 配下に複製。</p>
+          <p class="fig-path-picker__cta">↓ このページの手順で進める</p>
+        </div>
+        <div class="fig-path-picker__card">
+          <span class="fig-path-picker__badge">外部リポ</span>
+          <div class="fig-path-picker__title">Path 2<br>git submodule</div>
+          <p class="fig-path-picker__hint">別リポを持つが、Core と密結合したいプロダクト。バージョンは commit hash で pin。</p>
+          <p class="fig-path-picker__cta"><a href="#/developer/guide/integration">→ Integration Guide / Path 2</a></p>
+        </div>
+        <div class="fig-path-picker__card">
+          <span class="fig-path-picker__badge">外部リポ</span>
+          <div class="fig-path-picker__title">Path 3<br>CDN / コピー</div>
+          <p class="fig-path-picker__hint">軽量導入。ビルドツール非対応の既存アプリ・最小フットプリント用。</p>
+          <p class="fig-path-picker__cta"><a href="#/developer/guide/integration">→ Integration Guide / Path 3</a></p>
+        </div>
+      </div>
+      <p>どのパスを選んでも、まず <a href="#/developer/guide/asset-reference">Asset Reference</a> で「<strong>何が改変可能で何が不変か</strong>」を把握してから始めることを推奨します。</p>
+
+      <p>以下、Path 1（このリポ内に Extension を新規追加する）の完全手順です。所要時間: 約 20 分。</p>
 
       <h3>事前チェックリスト</h3>
       <ul>
@@ -831,7 +1369,14 @@ Copy-Item -Recurse extensions/template extensions/{your-project-name}</code></pr
   "signatureColor": {
     "value": "#2378A8",
     "name": "Operations Blue",
-    "harmonization": "Sky-Blue (Brand secondary-dark)"
+    "harmonization": {
+      "preset": "blue-trust",
+      "hue": "blue",
+      "taste": "trust",
+      "relation": "monochromatic",
+      "baseToken": "--color-brand-secondary",
+      "note": "FIG Brand Secondary の暗側。業務管理画面の堅牢さに最適。"
+    }
   },
   "owners": ["@takahashi", "@hayaki"],
   "createdAt": "2026-05-15"
@@ -849,7 +1394,13 @@ Copy-Item -Recurse extensions/template extensions/{your-project-name}</code></pr
           <tr><td><code>designSystem.coreVersion</code></td><td>semver</td><td>✓</td><td>例: <code>v1.2.0</code>。<a href="#/developer/guide/version-management">VM</a> 参照</td></tr>
           <tr><td><code>designSystem.profile</code></td><td>enum</td><td>✓</td><td><code>Web-Admin</code> / <code>Mobile-Consumer</code> / <code>Mobile-Terminal</code></td></tr>
           <tr><td><code>signatureColor.value</code></td><td>hex</td><td>✓</td><td>プロダクト識別色</td></tr>
-          <tr><td><code>signatureColor.harmonization</code></td><td>string</td><td>推奨</td><td>Core ブランドとの関係（説明文）</td></tr>
+          <tr><td><code>signatureColor.name</code></td><td>string</td><td>✓</td><td>識別色の表示名</td></tr>
+          <tr><td><code>signatureColor.harmonization.preset</code></td><td>enum</td><td>✓</td><td><code>{hue}-{taste}</code> 形式。<a href="#/core/foundations/color-system">Color System</a> のマトリクスから1つ選択（または <code>custom</code>）</td></tr>
+          <tr><td><code>signatureColor.harmonization.hue</code></td><td>enum</td><td>✓</td><td><code>turquoise</code> / <code>blue</code> / <code>red</code> / <code>orange</code> / <code>mono</code></td></tr>
+          <tr><td><code>signatureColor.harmonization.taste</code></td><td>enum</td><td>✓</td><td><code>pop</code>（明・親しみ） / <code>trust</code>（深・業務） / <code>calm</code>（淡・静謐）</td></tr>
+          <tr><td><code>signatureColor.harmonization.relation</code></td><td>enum</td><td>✓</td><td><code>monochromatic</code> / <code>analogous</code> / <code>complementary</code> / <code>triadic</code> / <code>neutral-mono</code></td></tr>
+          <tr><td><code>signatureColor.harmonization.baseToken</code></td><td>enum</td><td>✓</td><td>派生元の Core トークン（<code>--color-brand-primary</code> など）</td></tr>
+          <tr><td><code>signatureColor.harmonization.note</code></td><td>string</td><td>任意</td><td>プリセット選択理由・微調整意図など</td></tr>
           <tr><td><code>owners</code></td><td>string[]</td><td>推奨</td><td>変更レビュー担当者（GitHub ID）</td></tr>
         </tbody>
       </table>
@@ -867,13 +1418,17 @@ Copy-Item -Recurse extensions/template extensions/{your-project-name}</code></pr
         </tbody>
       </table>
 
-      <h3>STEP 4 — Signature Color の決定</h3>
-      <p><a href="#/core/foundations/color-system">Color System & Palette</a> の Harmonization ルールに沿って、プロダクト独自の Signature Color を1色決定します。</p>
+      <h3>STEP 4 — Signature Color の決定（プリセット選択）</h3>
+      <p><a href="#/core/foundations/color-system">Color System & Palette</a> の Hue × Taste マトリクスから 1 セルを選び、<code>harmonization</code> を構造化して保存します。</p>
       <ol>
-        <li>FIG Brand Primary（Turquoise）/ Secondary（Sky Blue）との関係を <strong>±15°（HSL）以内</strong> に保つ</li>
-        <li>白テキスト 4.5:1 以上のコントラストを確保（CTA 背景として利用可能にする）</li>
+        <li><strong>色相 (Hue)</strong> を 5 択から選択 — <code>turquoise</code> / <code>blue</code> / <code>red</code> / <code>orange</code> / <code>mono</code></li>
+        <li><strong>テイスト (Taste)</strong> を 3 択から選択 — <code>pop</code>（明・親しみ） / <code>trust</code>（深・業務） / <code>calm</code>（淡・静謐）</li>
+        <li>プリセット ID <code>{hue}-{taste}</code> から <code>value</code> / <code>name</code> / <code>relation</code> / <code>baseToken</code> が一括で確定</li>
+        <li>独自色に微調整する場合のみ <code>value</code> を上書き → <code>preset</code> は自動で <code>custom</code> に切替（<code>hue</code> / <code>taste</code> は意図として保持）</li>
+        <li>CTA 背景に使う場合は <code>Trust</code> 行のプリセットを選ぶ（白テキスト 4.5:1 を保証）</li>
         <li>機能色（Success/Warning/Error/Info）は Core 既定を継承（Signature だけ独自）</li>
       </ol>
+      <p>プリセットの正典定義は <code>tokens/signature-presets.json</code>。<a href="#/developer/guide/ai-co-creation#ai-generator">AI Co-creation</a> の Interactive Generator で Hue / Taste を選ぶだけで該当プリセットが反映されます。</p>
 
       <h3>STEP 5 — 個別拡張（Extensions）の記述</h3>
       <p>共通コンポーネントで不足する UI のみ <code>extensions/{project-name}/components/</code> に独自スタイルを記述します。<strong>必須ルール</strong>:</p>
@@ -883,6 +1438,25 @@ Copy-Item -Recurse extensions/template extensions/{your-project-name}</code></pr
         <li>✅ クラス名は <code>.{project-name}-{component}</code> 形式（衝突回避）</li>
         <li>❌ <code>.fig-*</code> クラスを上書きしない（Core 部品はそのまま使う）</li>
       </ul>
+
+      <h4>STEP 5-a — <code>--color-signature</code> の上書き</h4>
+      <p><code>extensions/{project-name}/styles/extensions.css</code> の冒頭で <code>--color-signature</code> を 1 行宣言します。<code>tokens/signature.css</code> が <code>color-mix()</code> で 4 つの派生トークン（<code>-light</code> / <code>-dark</code> / <code>-tint</code> / <code>-shadow</code>）を自動生成するため、エンジニアの記述はこの 1 行のみで済みます。</p>
+      <pre class="page-code"><code>:root {
+  --color-signature: #007A7A;   /* project-settings.json の signatureColor.value と一致 */
+}
+</code></pre>
+      <p><strong>注意</strong>: <code>--color-signature-light/dark/tint/shadow</code> を直接上書きするとブランド調和が壊れるため禁止。詳細は <a href="#/core/foundations/color-system">Color System & Palette</a> の §4 参照。</p>
+
+      <h4>STEP 5-b — <code>index.html</code> の CSS 読み込み順</h4>
+      <p>新規プロジェクトの <code>index.html</code> では以下の順で読み込みます（<code>tokens/signature.css</code> は ② と ④ の間）:</p>
+      <pre class="page-code"><code>&lt;link rel="stylesheet" href="../../primitives.css"&gt;
+&lt;link rel="stylesheet" href="../../semantic.css"&gt;
+&lt;link rel="stylesheet" href="../../tokens/signature.css"&gt;
+&lt;link rel="stylesheet" href="../../tokens/base.css"&gt;
+&lt;link rel="stylesheet" href="../../tokens/profile-{admin|consumer|terminal}.css"&gt;
+&lt;link rel="stylesheet" href="../../tokens/components.css"&gt;
+&lt;link rel="stylesheet" href="./styles/extensions.css"&gt;
+</code></pre>
 
       <h3>STEP 6 — ポータルへの登録</h3>
       <p>新規プロジェクトのページを <code>assets/js/portal-content.js</code> の <code>SITEMAP.extensions.sections</code> に追加：</p>
@@ -1110,6 +1684,38 @@ chore(deps): bump postcss to 8.4.31</code></pre>
           outline-offset: 1px;
           border-color: var(--color-border-brand, #1A8589);
         }
+        .fig-ai-form__input[aria-invalid="true"] {
+          border-color: #dc2626;
+          background: #fef2f2;
+        }
+        .fig-ai-form__input[aria-invalid="true"]:focus {
+          outline-color: #dc2626;
+          border-color: #dc2626;
+        }
+        .fig-ai-form__validation {
+          display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+          min-height: 22px;
+          font-size: 12px;
+          margin-top: 2px;
+        }
+        .fig-ai-form__validation-state[data-state="valid"] { color: #16a34a; font-weight: 600; }
+        .fig-ai-form__validation-state[data-state="error"] { color: #dc2626; font-weight: 600; }
+        .fig-ai-form__auto-fix {
+          font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+          font-size: 11px;
+          font-weight: 600;
+          color: var(--color-text-onBrand, #ffffff);
+          background: var(--color-surface-brand, #1A8589);
+          border: none;
+          padding: 4px 10px;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+        .fig-ai-form__auto-fix:hover { background: var(--color-brand-primary-dark, #146e72); }
+        .fig-ai-form__auto-fix:focus-visible {
+          outline: 2px solid var(--color-border-brand, #1A8589);
+          outline-offset: 2px;
+        }
         .fig-ai-form__color-row {
           display: flex; align-items: center; gap: 8px;
         }
@@ -1185,8 +1791,12 @@ chore(deps): bump postcss to 8.4.31</code></pre>
 
       <form id="fig-ai-prompt-form" class="fig-ai-form" autocomplete="off" oninput="window.figAICoCreation && window.figAICoCreation.update(this)">
         <div class="fig-ai-form__field">
-          <label class="fig-ai-form__label" for="fig-ai-projectName">プロジェクト名 <span class="fig-ai-form__hint">（kebab-case / 英小文字）</span></label>
-          <input class="fig-ai-form__input" type="text" id="fig-ai-projectName" name="projectName" placeholder="busapp" value="busapp">
+          <label class="fig-ai-form__label" for="fig-ai-projectName">プロジェクト名 <span class="fig-ai-form__hint">（kebab-case / 英小文字・数字・ハイフンのみ・先頭は英字。URL とフォルダ名に直結）</span></label>
+          <input class="fig-ai-form__input" type="text" id="fig-ai-projectName" name="projectName"
+                 placeholder="busapp" value="busapp"
+                 pattern="^[a-z][a-z0-9-]*$"
+                 aria-describedby="fig-ai-projectName-validation">
+          <div class="fig-ai-form__validation" id="fig-ai-projectName-validation" aria-live="polite"></div>
         </div>
         <div class="fig-ai-form__field">
           <label class="fig-ai-form__label" for="fig-ai-displayName">表示名</label>
@@ -1212,20 +1822,42 @@ chore(deps): bump postcss to 8.4.31</code></pre>
             <option value="v1.0.0">v1.0.0</option>
           </select>
         </div>
+        <div class="fig-ai-form__field fig-ai-form__field--full">
+          <label class="fig-ai-form__label">シグネチャーカラー — プリセット選択 <span class="fig-ai-form__hint">（Hue × Taste マトリクスから1セル選ぶと value / name / harmonization が一括で埋まる）</span></label>
+        </div>
         <div class="fig-ai-form__field">
-          <label class="fig-ai-form__label" for="fig-ai-signatureValue">シグネチャーカラー</label>
+          <label class="fig-ai-form__label" for="fig-ai-hue">色相 (Hue)</label>
+          <select class="fig-ai-form__select" id="fig-ai-hue" name="hue" onchange="window.figAICoCreation && window.figAICoCreation.applyPreset(this.form, { fillValueAndName: true })">
+            <option value="turquoise" selected>Turquoise（FIG準拠 / monochromatic）</option>
+            <option value="blue">Sky Blue（FIG準拠 / monochromatic）</option>
+            <option value="red">Red（緊急・情熱 / complementary）</option>
+            <option value="orange">Orange（活発 / complementary）</option>
+            <option value="mono">Mono（静謐 / neutral-mono）</option>
+          </select>
+        </div>
+        <div class="fig-ai-form__field">
+          <label class="fig-ai-form__label" for="fig-ai-taste">テイスト (Taste)</label>
+          <select class="fig-ai-form__select" id="fig-ai-taste" name="taste" onchange="window.figAICoCreation && window.figAICoCreation.applyPreset(this.form, { fillValueAndName: true })">
+            <option value="pop" selected>Pop（明・親しみ）</option>
+            <option value="trust">Trust（深・業務 / CTA 安全）</option>
+            <option value="calm">Calm（淡・静謐 / 非 CTA）</option>
+          </select>
+        </div>
+        <input type="hidden" name="presetId" id="fig-ai-presetId" value="turquoise-pop">
+        <div class="fig-ai-form__field">
+          <label class="fig-ai-form__label" for="fig-ai-signatureValue">value <span class="fig-ai-form__hint">（プリセットから自動入力。微調整可）</span></label>
           <div class="fig-ai-form__color-row">
             <input class="fig-ai-form__color" type="color" id="fig-ai-signatureValue" name="signatureValue" value="#26B7BC" oninput="document.getElementById('fig-ai-signatureValueText').value = this.value.toUpperCase()">
             <input class="fig-ai-form__input" type="text" id="fig-ai-signatureValueText" value="#26B7BC" readonly tabindex="-1" aria-label="シグネチャーカラーの Hex 値（表示）">
           </div>
         </div>
         <div class="fig-ai-form__field">
-          <label class="fig-ai-form__label" for="fig-ai-signatureName">カラー名</label>
-          <input class="fig-ai-form__input" type="text" id="fig-ai-signatureName" name="signatureName" placeholder="Turquoise" value="Turquoise">
+          <label class="fig-ai-form__label" for="fig-ai-signatureName">name <span class="fig-ai-form__hint">（プリセットから自動入力）</span></label>
+          <input class="fig-ai-form__input" type="text" id="fig-ai-signatureName" name="signatureName" placeholder="Brand Turquoise" value="Brand Turquoise">
         </div>
         <div class="fig-ai-form__field fig-ai-form__field--full">
-          <label class="fig-ai-form__label" for="fig-ai-harmonization">調和ルール説明 <span class="fig-ai-form__hint">（Core ブランドとの関係を1行で）</span></label>
-          <input class="fig-ai-form__input" type="text" id="fig-ai-harmonization" name="harmonization" placeholder="FIG Brand Primary 同色（差別化のため将来固有色へ変更）" value="FIG Brand Primary 同色（差別化のため将来固有色へ変更）">
+          <label class="fig-ai-form__label" for="fig-ai-harmonizationNote">harmonization.note <span class="fig-ai-form__hint">（任意。プリセット選択理由・微調整意図など。空欄なら自動生成）</span></label>
+          <input class="fig-ai-form__input" type="text" id="fig-ai-harmonizationNote" name="harmonizationNote" placeholder="例: 業務向け識別色として彩度を上げた独自値">
         </div>
         <div class="fig-ai-form__field fig-ai-form__field--full">
           <label class="fig-ai-form__label" for="fig-ai-owners">オーナー <span class="fig-ai-form__hint">（カンマ区切り、GitHub ハンドル推奨）</span></label>
