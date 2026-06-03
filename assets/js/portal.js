@@ -256,21 +256,26 @@ function renderExternalTemplate(page) {
 }
 
 /* ── タブ共通 ── */
+// ページ遷移をまたいで最後にアクティブだったタブIDを記憶（メモリのみ／リロードでクリア）。
+let lastActiveTabId = null;
+
 function renderTabsTemplate(page, tabs) {
   const root  = h('div');
   const tabList = h('div', { class: 'page-tabs', role: 'tablist', 'aria-label': `${page.title} ビュー切替` });
   const panels  = h('div', { class: 'page-panels' });
 
-  tabs.forEach((t, i) => {
-    const isFirst = i === 0;
+  const initialTabId = tabs.some(t => t.id === lastActiveTabId) ? lastActiveTabId : tabs[0].id;
+
+  tabs.forEach((t) => {
+    const isActive = t.id === initialTabId;
     const btn = h('button', {
       type: 'button',
       class: 'page-tab',
       role: 'tab',
       id: `tab-${t.id}`,
       'aria-controls': `panel-${t.id}`,
-      'aria-selected': isFirst ? 'true' : 'false',
-      tabindex: isFirst ? '0' : '-1',
+      'aria-selected': isActive ? 'true' : 'false',
+      tabindex: isActive ? '0' : '-1',
       'data-tab': t.id,
       text: t.label,
       onClick: () => activateTab(t.id),
@@ -282,7 +287,7 @@ function renderTabsTemplate(page, tabs) {
       role: 'tabpanel',
       id: `panel-${t.id}`,
       'aria-labelledby': `tab-${t.id}`,
-      'data-active': isFirst ? 'true' : 'false',
+      'data-active': isActive ? 'true' : 'false',
     });
     panel.append(t.render());
     panels.append(panel);
@@ -304,6 +309,7 @@ function renderTabsTemplate(page, tabs) {
   });
 
   function activateTab(id) {
+    lastActiveTabId = id;
     $$('.page-tab', tabList).forEach(b => {
       const active = b.getAttribute('data-tab') === id;
       b.setAttribute('aria-selected', active ? 'true' : 'false');
