@@ -1,0 +1,35 @@
+# git-cliff configuration — FIG Core DS
+# Conventional Commits → CHANGELOG / GitHub Release（US-1.4 / SemVer）
+[changelog]
+header = """
+# Changelog
+
+FIG Core DS の変更履歴（SemVer・Conventional Commits）。\n
+"""
+body = """
+{% for group, commits in commits | group_by(attribute="group") %}
+### {{ group | upper_first }}
+{% for commit in commits %}
+- {{ commit.message | upper_first }} ({{ commit.id | truncate(length=7, end="") }})
+{% endfor %}
+{% endfor %}\n
+"""
+trim = true
+
+[git]
+conventional_commits = true
+filter_unconventional = true
+split_commits = false
+commit_parsers = [
+  { message = "^feat", group = "Features（追加・昇格＝MINOR）" },
+  { message = "^fix", group = "Fixes（修正＝PATCH）" },
+  { message = "^refactor", group = "Refactor" },
+  { message = "^docs", group = "Documentation" },
+  { message = "^perf", group = "Performance" },
+  { message = "^chore", group = "Chore" },
+  { body = ".*BREAKING CHANGE", group = "BREAKING（破壊的＝MAJOR）" },
+]
+protect_breaking_commits = true
+filter_commits = false
+tag_pattern = "v[0-9]*"
+sort_commits = "oldest"
