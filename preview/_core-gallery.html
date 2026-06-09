@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FIG Core DS — Component Gallery（検証用）</title>
+<!-- Core DS トークン一式＋コンポーネントCSS（preview/ から ../ 参照） -->
+<link rel="stylesheet" href="../primitives.css">
+<link rel="stylesheet" href="../semantic.css">
+<link rel="stylesheet" href="../tokens/signature.css">
+<link rel="stylesheet" href="../tokens/base.css">
+<link rel="stylesheet" href="../tokens/profile-admin.css">
+<link rel="stylesheet" href="../tokens/profile-consumer.css">
+<link rel="stylesheet" href="../tokens/profile-terminal.css">
+<link rel="stylesheet" href="../tokens/components.css">
+<style>
+  /* 検証ハーネス用の最小スタイル（Core部品ではない） */
+  body { margin: 0; background: var(--color-surface-canvas, #f4f8fb); color: var(--color-text-primary, #1e293b); font-family: var(--fig-font-family-base, sans-serif); }
+  .gx-bar { position: sticky; top: 0; z-index: 9999; display: flex; gap: 8px; align-items: center; padding: 10px 16px; background: var(--color-surface-default, #fff); border-bottom: 1px solid var(--color-border-default, #ddd); }
+  .gx-bar strong { margin-right: 8px; }
+  .gx-bar button { padding: 6px 12px; cursor: pointer; border: 1px solid var(--color-border-default, #ccc); border-radius: 8px; background: #fff; }
+  .gx-bar button.is-active { background: var(--color-surface-brand, #26b7bc); color: #fff; border-color: transparent; }
+  main { padding: 24px; max-width: 1100px; margin: 0 auto; }
+  section { margin-bottom: 36px; }
+  h2 { border-bottom: 2px solid var(--color-surface-brand, #26b7bc); padding-bottom: 4px; }
+  .gx-row { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin: 12px 0; }
+  .gx-cell { display: flex; flex-direction: column; gap: 6px; }
+  .gx-label { font-size: 11px; color: var(--color-text-secondary, #64748b); }
+</style>
+</head>
+<body class="fig-profile-admin">
+
+<div class="gx-bar">
+  <strong>Profile:</strong>
+  <button data-p="fig-profile-admin" class="is-active">Web-Admin</button>
+  <button data-p="fig-profile-consumer">Mobile-Consumer</button>
+  <button data-p="fig-profile-terminal">Mobile-Terminal</button>
+  <span style="margin-left:auto;font-size:12px;color:#64748b">FIG Core DS — 全30コンポーネント検証ギャラリー</span>
+</div>
+
+<main>
+  <section>
+    <h2>Actions</h2>
+    <div class="gx-row">
+      <button class="fig-button">Primary</button>
+      <button class="fig-button fig-button--secondary">Secondary</button>
+      <button class="fig-button fig-button--ghost">Ghost</button>
+      <button class="fig-button" disabled>Disabled</button>
+      <button class="fig-fab" aria-label="追加">＋</button>
+      <button class="fig-icon-button" aria-label="メニュー">☰</button>
+    </div>
+    <div class="gx-row">
+      <div class="fig-segmented" role="group" aria-label="表示">
+        <button class="fig-segmented__item" aria-selected="true">日</button>
+        <button class="fig-segmented__item">週</button>
+        <button class="fig-segmented__item">月</button>
+      </div>
+      <span class="fig-switch" role="switch" aria-checked="false"><span class="fig-switch__track"></span><span class="fig-switch__thumb"></span></span>
+      <span class="fig-switch" role="switch" aria-checked="true"><span class="fig-switch__track"></span><span class="fig-switch__thumb"></span></span>
+    </div>
+  </section>
+
+  <section>
+    <h2>Inputs</h2>
+    <div class="gx-row">
+      <span class="fig-checkbox" role="checkbox" aria-checked="false"></span>
+      <span class="fig-checkbox" role="checkbox" aria-checked="true">✓</span>
+      <span class="fig-radio" role="radio" aria-checked="false"></span>
+      <span class="fig-radio" role="radio" aria-checked="true">●</span>
+      <span class="fig-picker" role="combobox" aria-expanded="false">選択してください ▾</span>
+    </div>
+    <div class="gx-row" style="display:block">
+      <div class="fig-form-group" style="max-width:320px">
+        <label class="fig-form-group__label" for="gx-i1">氏名</label>
+        <input id="gx-i1" class="fig-input" placeholder="山田 太郎">
+        <span class="fig-form-group__help">フルネームを入力してください</span>
+      </div>
+      <div class="fig-form-group" style="max-width:320px;margin-top:12px">
+        <label class="fig-form-group__label" for="gx-i2">メール</label>
+        <input id="gx-i2" class="fig-input" value="invalid" aria-invalid="true">
+        <span class="fig-form-group__error">形式が正しくありません</span>
+      </div>
+    </div>
+    <div class="gx-row" style="display:block">
+      <table class="fig-table">
+        <thead><tr><th>路線</th><th>状態</th><th>次便</th></tr></thead>
+        <tbody>
+          <tr><td>1系統</td><td><span class="fig-status-pill fig-status-pill--success">通常</span></td><td>10:24</td></tr>
+          <tr><td>5系統</td><td><span class="fig-status-pill fig-status-pill--warning">遅延</span></td><td>10:31</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Navigation</h2>
+    <div class="gx-row" style="display:block">
+      <div class="fig-tabs" role="tablist">
+        <button class="fig-tab" role="tab" aria-selected="true">概要</button>
+        <button class="fig-tab" role="tab">詳細</button>
+        <button class="fig-tab" role="tab">履歴</button>
+      </div>
+    </div>
+    <div class="gx-row">
+      <nav class="fig-breadcrumb" aria-label="パンくず">
+        <a href="#">ホーム</a><span class="fig-breadcrumb__sep" aria-hidden="true">/</span>
+        <a href="#">バス</a><span class="fig-breadcrumb__sep" aria-hidden="true">/</span>
+        <span aria-current="page">路線1</span>
+      </nav>
+    </div>
+    <div class="gx-row">
+      <nav class="fig-pagination" aria-label="ページ送り">
+        <button class="fig-pagination__item" aria-label="前へ">‹</button>
+        <button class="fig-pagination__item" aria-current="page">1</button>
+        <button class="fig-pagination__item">2</button>
+        <button class="fig-pagination__item">3</button>
+        <button class="fig-pagination__item" aria-label="次へ">›</button>
+      </nav>
+    </div>
+    <div class="gx-row">
+      <nav class="fig-nav-rail" aria-label="サイド">
+        <span class="fig-nav-rail__item" aria-current="page">🏠<small>ホーム</small></span>
+        <span class="fig-nav-rail__item">🚌<small>路線</small></span>
+        <span class="fig-nav-rail__item">⚙️<small>設定</small></span>
+      </nav>
+      <nav class="fig-bottom-nav" aria-label="下部" style="width:280px">
+        <span class="fig-bottom-nav__item" aria-current="page">🏠<small>ホーム</small></span>
+        <span class="fig-bottom-nav__item">🚌<small>路線</small></span>
+        <span class="fig-bottom-nav__item">⚙️<small>設定</small></span>
+      </nav>
+    </div>
+  </section>
+
+  <section>
+    <h2>Containers</h2>
+    <div class="gx-row" style="align-items:flex-start">
+      <div class="fig-card" style="max-width:280px">
+        <h3 class="fig-card__title">カードタイトル</h3>
+        <p class="fig-card__body">本文テキスト。Semantic トークンのみ参照。</p>
+      </div>
+      <header class="fig-header" style="width:320px"><strong>画面ヘッダ</strong><span style="margin-left:auto"><span class="fig-icon-button" aria-label="設定">⚙️</span></span></header>
+    </div>
+    <div class="gx-row">
+      <button class="fig-button" onclick="document.getElementById('gx-modal').style.display='flex'">モーダルを開く</button>
+      <span class="gx-label">bottom-sheet / side-sheet も同系（position 固定）</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>Feedback / Status</h2>
+    <div class="gx-row" style="display:block">
+      <div class="fig-alert">情報のお知らせです。</div>
+      <div class="fig-alert fig-alert--success" style="margin-top:8px">成功しました。</div>
+      <div class="fig-alert fig-alert--warning" style="margin-top:8px">注意が必要です。</div>
+      <div class="fig-alert fig-alert--error" style="margin-top:8px">エラーが発生しました。</div>
+    </div>
+    <div class="gx-row">
+      <span class="fig-badge">3</span>
+      <span class="fig-badge fig-badge--dot"></span>
+      <span class="fig-status-pill">中立</span>
+      <span class="fig-status-pill fig-status-pill--success">通常</span>
+      <span class="fig-status-pill fig-status-pill--warning">遅延</span>
+      <span class="fig-status-pill fig-status-pill--error">運休</span>
+      <span class="fig-toast">保存しました</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>Content</h2>
+    <div class="gx-row">
+      <ul class="fig-list" style="width:320px">
+        <li class="fig-list-item"><span class="fig-icon-bubble">🚌</span> リスト行 1</li>
+        <li class="fig-list-item"><span class="fig-icon-bubble">📍</span> リスト行 2</li>
+      </ul>
+      <span class="fig-sense">FIG Sense（暫定）</span>
+    </div>
+  </section>
+</main>
+
+<!-- Modal demo -->
+<div id="gx-modal" class="fig-modal__scrim" style="display:none" onclick="if(event.target===this)this.style.display='none'">
+  <div class="fig-modal__dialog" style="max-width:420px">
+    <h3 class="fig-card__title">確認</h3>
+    <p class="fig-card__body">これはモーダルダイアログの例です。</p>
+    <div style="margin-top:16px;text-align:right">
+      <button class="fig-button fig-button--ghost" onclick="document.getElementById('gx-modal').style.display='none'">閉じる</button>
+      <button class="fig-button" onclick="document.getElementById('gx-modal').style.display='none'">OK</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // プロファイル切替
+  document.querySelectorAll('.gx-bar button[data-p]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      document.body.className = b.dataset.p;
+      document.querySelectorAll('.gx-bar button[data-p]').forEach(function (x) { x.classList.remove('is-active'); });
+      b.classList.add('is-active');
+    });
+  });
+</script>
+</body>
+</html>
