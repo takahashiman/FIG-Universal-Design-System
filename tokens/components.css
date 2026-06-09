@@ -297,3 +297,163 @@
   font-size: var(--fig-size-body);
   line-height: var(--fig-line-height-tight);
 }
+
+/* ════════════════════════════════════════════════
+   コンテナ系（Step5 バッチ2）
+   ════════════════════════════════════════════════ */
+.fig-modal__scrim {
+  position: fixed; inset: 0;
+  background: var(--color-surface-scrim);
+  z-index: var(--elevation-z-modal);
+  display: flex; align-items: center; justify-content: center;
+  padding: var(--fig-spacing-m);
+}
+.fig-modal__dialog {
+  width: 100%; max-width: var(--fig-max-content-width);
+  background: var(--color-surface-default);
+  border-radius: var(--fig-radius-card);
+  box-shadow: var(--fig-elevation-floating);
+  padding: var(--fig-spacing-l);
+}
+.fig-bottom-sheet {
+  position: fixed; inset-inline: 0; inset-block-end: 0;
+  background: var(--color-surface-default);
+  border-start-start-radius: var(--fig-radius-card);
+  border-start-end-radius: var(--fig-radius-card);
+  box-shadow: var(--fig-elevation-floating);
+  padding: var(--fig-spacing-l);
+  z-index: var(--elevation-z-modal);
+}
+.fig-side-sheet {
+  position: fixed; inset-block: 0; inset-inline-end: 0;
+  width: min(90vw, var(--fig-max-content-width));
+  background: var(--color-surface-default);
+  box-shadow: var(--fig-elevation-floating);
+  padding: var(--fig-spacing-l);
+  z-index: var(--elevation-z-modal);
+}
+.fig-header {
+  display: flex; align-items: center; gap: var(--fig-spacing-m);
+  min-height: var(--fig-target-comfortable);
+  padding: var(--fig-spacing-s) var(--fig-spacing-m);
+  background: var(--color-surface-default);
+  border-block-end: 1px solid var(--color-border-default);
+  z-index: var(--elevation-z-header);
+}
+.fig-form-group { display: flex; flex-direction: column; gap: var(--fig-spacing-xs); }
+.fig-form-group__label { font-family: var(--fig-font-family-base); font-size: var(--fig-size-body-strong); font-weight: var(--fw-semibold); color: var(--color-text-primary); }
+.fig-form-group__help  { font-size: var(--fig-size-caption); color: var(--color-text-secondary); }
+.fig-form-group__error { font-size: var(--fig-size-caption); color: var(--color-text-error); }
+
+/* ════════════════════════════════════════════════
+   アクション系（Step5 バッチ3）
+   ════════════════════════════════════════════════ */
+.fig-fab {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: var(--fig-target-comfortable); min-height: var(--fig-target-comfortable);
+  padding: var(--fig-spacing-s);
+  border: none; border-radius: var(--fig-radius-pill);
+  background: var(--color-surface-brand); color: var(--color-text-onBrand);
+  box-shadow: var(--fig-elevation-floating); cursor: pointer;
+}
+.fig-fab:focus-visible { outline: var(--focus-ring-width) solid var(--color-border-focus); outline-offset: var(--focus-ring-offset); }
+.fig-icon-button {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: var(--fig-target-min); min-height: var(--fig-target-min);
+  padding: var(--fig-spacing-xs);
+  border: none; border-radius: var(--fig-radius-control);
+  background: transparent; color: var(--color-text-secondary); cursor: pointer;
+}
+.fig-icon-button:hover { background: var(--color-surface-container-low); }
+.fig-icon-button:focus-visible { outline: var(--focus-ring-width) solid var(--color-border-focus); outline-offset: var(--focus-ring-offset); }
+.fig-segmented { display: inline-flex; gap: var(--fig-spacing-xs); padding: var(--fig-spacing-xs); background: var(--color-surface-container-low); border-radius: var(--fig-radius-control); }
+.fig-segmented__item {
+  padding: var(--fig-spacing-xs) var(--fig-spacing-s);
+  border: none; border-radius: var(--fig-radius-control);
+  background: transparent; color: var(--color-text-secondary);
+  font-family: var(--fig-font-family-base); font-size: var(--fig-size-body); cursor: pointer;
+}
+.fig-segmented__item[aria-selected="true"] { background: var(--color-surface-default); color: var(--color-text-brand); font-weight: var(--fw-semibold); }
+.fig-switch { position: relative; display: inline-flex; align-items: center; width: 44px; height: 24px; }
+.fig-switch__track { width: 100%; height: 100%; border-radius: var(--fig-radius-pill); background: var(--color-text-disabled); transition: background-color var(--fig-motion-duration-quick) var(--motion-easing-standard); }
+.fig-switch__thumb { position: absolute; inset-block-start: 2px; inset-inline-start: 2px; width: 20px; height: 20px; border-radius: var(--fig-radius-pill); background: var(--color-surface-default); }
+.fig-switch[aria-checked="true"] .fig-switch__track { background: var(--color-surface-brand); }
+.fig-switch[aria-checked="true"] .fig-switch__thumb { inset-inline-start: auto; inset-inline-end: 2px; }
+
+/* ════════════════════════════════════════════════
+   入力系（Step5 バッチ4）
+   ════════════════════════════════════════════════ */
+.fig-checkbox, .fig-radio {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: var(--fig-size-title); height: var(--fig-size-title);
+  border: 1px solid var(--color-border-default);
+  background: var(--color-surface-default); cursor: pointer;
+}
+.fig-checkbox { border-radius: var(--fig-radius-control); }
+.fig-radio { border-radius: var(--fig-radius-pill); }
+.fig-checkbox[aria-checked="true"], .fig-radio[aria-checked="true"] { background: var(--color-surface-brand); border-color: var(--color-surface-brand); color: var(--color-text-onBrand); }
+.fig-checkbox:focus-visible, .fig-radio:focus-visible { outline: var(--focus-ring-width) solid var(--color-border-focus); outline-offset: var(--focus-ring-offset); }
+.fig-picker {
+  display: inline-flex; align-items: center; gap: var(--fig-spacing-xs);
+  min-height: var(--fig-target-min);
+  padding: var(--fig-control-padding-y) var(--fig-control-padding-x);
+  border: 1px solid var(--color-border-default); border-radius: var(--fig-radius-control);
+  background: var(--color-surface-default); color: var(--color-text-primary);
+  font-family: var(--fig-font-family-base); font-size: var(--fig-size-body); cursor: pointer;
+}
+.fig-table { width: 100%; border-collapse: collapse; font-family: var(--fig-font-family-base); font-size: var(--fig-size-body); color: var(--color-text-primary); }
+.fig-table th, .fig-table td { text-align: start; padding: var(--fig-density-row-padding-y) var(--fig-spacing-m); border-block-end: 1px solid var(--color-border-default); }
+.fig-table th { font-weight: var(--fw-semibold); color: var(--color-text-secondary); background: var(--color-surface-container-low); }
+
+/* ════════════════════════════════════════════════
+   ナビゲーション系（Step5 バッチ5）
+   ════════════════════════════════════════════════ */
+.fig-tabs { display: flex; gap: var(--fig-spacing-m); border-block-end: 1px solid var(--color-border-default); }
+.fig-tab {
+  padding: var(--fig-spacing-s) var(--fig-spacing-xs);
+  border: none; background: transparent; cursor: pointer;
+  font-family: var(--fig-font-family-base); font-size: var(--fig-size-body);
+  color: var(--color-text-secondary); border-block-end: 2px solid transparent;
+}
+.fig-tab[aria-selected="true"] { color: var(--color-text-brand); border-block-end-color: var(--color-surface-brand); font-weight: var(--fw-semibold); }
+.fig-breadcrumb { display: flex; flex-wrap: wrap; align-items: center; gap: var(--fig-spacing-xs); font-size: var(--fig-size-caption); color: var(--color-text-secondary); }
+.fig-breadcrumb__sep { color: var(--color-text-disabled); }
+.fig-pagination { display: inline-flex; align-items: center; gap: var(--fig-spacing-xs); }
+.fig-pagination__item {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: var(--fig-target-min); min-height: var(--fig-target-min);
+  border: 1px solid var(--color-border-default); border-radius: var(--fig-radius-control);
+  background: var(--color-surface-default); color: var(--color-text-primary);
+  font-family: var(--fig-font-family-base); font-size: var(--fig-size-body); cursor: pointer;
+}
+.fig-pagination__item[aria-current="page"] { background: var(--color-surface-brand); color: var(--color-text-onBrand); border-color: var(--color-surface-brand); }
+.fig-nav-rail { display: inline-flex; flex-direction: column; gap: var(--fig-spacing-s); padding: var(--fig-spacing-s); background: var(--color-surface-default); }
+.fig-nav-rail__item {
+  display: flex; flex-direction: column; align-items: center; gap: var(--fig-spacing-xs);
+  min-height: var(--fig-target-comfortable); padding: var(--fig-spacing-xs);
+  border-radius: var(--fig-radius-control); color: var(--color-text-secondary); cursor: pointer;
+  font-size: var(--fig-size-caption);
+}
+.fig-nav-rail__item[aria-current="page"] { background: var(--color-surface-brand-subtle); color: var(--color-text-brand); }
+.fig-bottom-nav { display: flex; justify-content: space-around; align-items: stretch; background: var(--color-surface-default); border-block-start: 1px solid var(--color-border-default); }
+.fig-bottom-nav__item {
+  display: flex; flex-direction: column; align-items: center; gap: var(--fig-spacing-xs);
+  flex: 1; min-height: var(--fig-target-comfortable); padding: var(--fig-spacing-xs);
+  color: var(--color-text-secondary); font-size: var(--fig-size-caption); cursor: pointer;
+}
+.fig-bottom-nav__item[aria-current="page"] { color: var(--color-text-brand); }
+
+/* ════════════════════════════════════════════════
+   残（Step5 バッチ6）
+   ════════════════════════════════════════════════ */
+.fig-icon-bubble {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: var(--fig-target-comfortable); height: var(--fig-target-comfortable);
+  border-radius: var(--fig-radius-pill);
+  background: var(--color-surface-brand-subtle); color: var(--color-text-brand);
+}
+/* .fig-sense — FIG 固有のインジケータ。契約はデザイナー精査で確定（preview/components-fig-sense.html 参照） */
+.fig-sense {
+  display: inline-flex; align-items: center; gap: var(--fig-spacing-xs);
+  color: var(--color-text-brand); font-family: var(--fig-font-family-base); font-size: var(--fig-size-caption);
+}
