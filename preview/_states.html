@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FIG Core DS — 主要部品 状態プレビュー</title>
+<link rel="stylesheet" href="../primitives.css">
+<link rel="stylesheet" href="../semantic.css">
+<link rel="stylesheet" href="../tokens/signature.css">
+<link rel="stylesheet" href="../tokens/base.css">
+<link rel="stylesheet" href="../tokens/profile-admin.css">
+<link rel="stylesheet" href="../tokens/profile-consumer.css">
+<link rel="stylesheet" href="../tokens/profile-terminal.css">
+<link rel="stylesheet" href="../tokens/components.css">
+<style>
+  body { margin:0; background: var(--color-surface-canvas,#f4f8fb); color: var(--color-text-primary,#1e293b); font-family: var(--fig-font-family-base,sans-serif); }
+  .gx-bar { position:sticky; top:0; z-index:9999; display:flex; gap:8px; align-items:center; padding:10px 16px; background:#fff; border-bottom:1px solid #ddd; }
+  .gx-bar button { padding:6px 12px; cursor:pointer; border:1px solid #ccc; border-radius:8px; background:#fff; }
+  .gx-bar button.is-active { background:#26b7bc; color:#fff; border-color:transparent; }
+  main { padding:24px; max-width:1000px; margin:0 auto; }
+  table.st { width:100%; border-collapse:collapse; margin-bottom:28px; background:#fff; }
+  table.st th, table.st td { border:1px solid #e2e8f0; padding:12px; text-align:center; vertical-align:middle; }
+  table.st th { background:#f1f5f9; font-size:12px; color:#64748b; }
+  table.st caption { text-align:left; font-weight:700; padding:8px 0; }
+  .note { font-size:12px; color:#64748b; margin: 0 0 16px; }
+</style>
+</head>
+<body class="fig-profile-admin">
+<div class="gx-bar">
+  <strong>Profile:</strong>
+  <button data-p="fig-profile-admin" class="is-active">Web-Admin</button>
+  <button data-p="fig-profile-consumer">Mobile-Consumer</button>
+  <button data-p="fig-profile-terminal">Mobile-Terminal</button>
+  <span style="margin-left:auto;font-size:12px;color:#64748b">主要インタラクティブ部品の状態（5+）</span>
+</div>
+<main>
+  <p class="note">※ Hover / Active / Focus は静的表示できないため、実際にマウス・キーボードで操作して確認してください（CSS の :hover / :active / :focus-visible が反応します）。Default / Disabled / Error / Selected を以下に並べています。</p>
+
+  <table class="st">
+    <caption>Button</caption>
+    <tr><th>Default(Primary)</th><th>Secondary</th><th>Ghost</th><th>Disabled</th><th>Hover/Active/Focus</th></tr>
+    <tr>
+      <td><button class="fig-button">送信</button></td>
+      <td><button class="fig-button fig-button--secondary">送信</button></td>
+      <td><button class="fig-button fig-button--ghost">送信</button></td>
+      <td><button class="fig-button" disabled>送信</button></td>
+      <td><button class="fig-button">触れて確認</button></td>
+    </tr>
+  </table>
+
+  <table class="st">
+    <caption>Input / Form</caption>
+    <tr><th>Default</th><th>入力済</th><th>Error</th><th>Disabled</th><th>Focus</th></tr>
+    <tr>
+      <td><input class="fig-input" placeholder="未入力"></td>
+      <td><input class="fig-input" value="山田 太郎"></td>
+      <td><input class="fig-input" value="不正値" aria-invalid="true" style="border-color:var(--color-border-error)"></td>
+      <td><input class="fig-input" value="無効" disabled></td>
+      <td><input class="fig-input" placeholder="クリックで focus"></td>
+    </tr>
+  </table>
+
+  <table class="st">
+    <caption>Checkbox / Radio</caption>
+    <tr><th>未選択</th><th>選択</th><th>Radio 未</th><th>Radio 選択</th><th>Focus</th></tr>
+    <tr>
+      <td><span class="fig-checkbox" role="checkbox" aria-checked="false"></span></td>
+      <td><span class="fig-checkbox" role="checkbox" aria-checked="true">✓</span></td>
+      <td><span class="fig-radio" role="radio" aria-checked="false"></span></td>
+      <td><span class="fig-radio" role="radio" aria-checked="true">●</span></td>
+      <td><span class="fig-checkbox" role="checkbox" aria-checked="false" tabindex="0"></span></td>
+    </tr>
+  </table>
+
+  <table class="st">
+    <caption>Toggle Switch</caption>
+    <tr><th>OFF</th><th>ON</th><th>Focus</th></tr>
+    <tr>
+      <td><span class="fig-switch" role="switch" aria-checked="false"><span class="fig-switch__track"></span><span class="fig-switch__thumb"></span></span></td>
+      <td><span class="fig-switch" role="switch" aria-checked="true"><span class="fig-switch__track"></span><span class="fig-switch__thumb"></span></span></td>
+      <td><span class="fig-switch" role="switch" aria-checked="false" tabindex="0"><span class="fig-switch__track"></span><span class="fig-switch__thumb"></span></span></td>
+    </tr>
+  </table>
+
+  <table class="st">
+    <caption>Status Pill / Alert</caption>
+    <tr><th>中立</th><th>成功</th><th>警告</th><th>エラー</th><th>Alert(error)</th></tr>
+    <tr>
+      <td><span class="fig-status-pill">中立</span></td>
+      <td><span class="fig-status-pill fig-status-pill--success">通常</span></td>
+      <td><span class="fig-status-pill fig-status-pill--warning">遅延</span></td>
+      <td><span class="fig-status-pill fig-status-pill--error">運休</span></td>
+      <td><div class="fig-alert fig-alert--error">エラーが発生しました</div></td>
+    </tr>
+  </table>
+</main>
+<script>
+  document.querySelectorAll('.gx-bar button[data-p]').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.body.className=b.dataset.p;
+      document.querySelectorAll('.gx-bar button[data-p]').forEach(function(x){x.classList.remove('is-active');});
+      b.classList.add('is-active');
+    });
+  });
+</script>
+</body>
+</html>

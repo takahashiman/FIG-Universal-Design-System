@@ -1,0 +1,33 @@
+/* FIG Core DS — Signature Color Layer
+ * ──────────────────────────────────────────────────────────────────
+ * 読み込み順: primitives → semantic → **signature** → base → profiles → components
+ *
+ * 目的（再利用の核心 / template 複製戦略）:
+ *   この層は「製品のシグネチャ色」を一点で定義する。
+ *   CSS 変数は使用時に遅延解決されるため、ここで brand プリミティブを
+ *   --color-signature-* に委譲すると、semantic の brand 連鎖
+ *   (--color-surface-brand / --color-text-brand 等) が**自動的に再テーマ**される。
+ *
+ * 新規プロジェクトの作り方:
+ *   この 4〜5 行の --color-signature-* の HEX を自社ブランド色へ変更するだけ。
+ *   JSX / component / semantic は一切触らない。
+ *
+ * 既定 = FIG ターコイズ（#26B7BC）。下記は primitives と同値なので Core では無変化。
+ * ──────────────────────────────────────────────────────────────────
+ */
+
+:root {
+  /* ── この製品のシグネチャ色（プロジェクトはここだけ変更） ── */
+  --color-signature:        #26B7BC;              /* メイン（FIG ターコイズ） */
+  --color-signature-light:  #5CCED2;              /* ライト */
+  --color-signature-dark:   #1A8589;              /* ダーク（CTA 面・白文字 4.5:1） */
+  --color-signature-tint:   rgba(38, 183, 188, 0.10);  /* ソフト塗り */
+  --color-signature-shadow: rgba(38, 183, 188, 0.25);  /* 影ティント */
+
+  /* ── brand プリミティブを signature へ委譲（連鎖的に再テーマ） ── */
+  --color-brand-primary:        var(--color-signature);
+  --color-brand-primary-light:  var(--color-signature-light);
+  --color-brand-primary-dark:   var(--color-signature-dark);
+  --color-brand-primary-tint:   var(--color-signature-tint);
+  --color-brand-primary-shadow: var(--color-signature-shadow);
+}
