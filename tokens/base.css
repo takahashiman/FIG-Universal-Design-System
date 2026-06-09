@@ -81,6 +81,7 @@
   --fig-radius-control:  12px;   /* ボタン・入力 */
   --fig-radius-card:     16px;   /* カード */
   --fig-radius-hero:     20px;   /* ヒーロー・定期券 */
+  --fig-radius-pill:     999px;  /* バッジ・ステータスピル（全周丸） */
 
   /* ════════════════════════════════════════════════
      6 ・ Layout（最大幅・グリッド）

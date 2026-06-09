@@ -222,3 +222,78 @@
   margin-inline: auto;
   padding-inline: var(--fig-spacing-m);
 }
+
+/* ════════════════════════════════════════════════
+   Feedback / Status 系（Step5 バッチ1）
+   生値なし・トークン経由・3プロファイル成立
+   ════════════════════════════════════════════════ */
+
+/* .fig-alert — 注意喚起バナー（severity: success/warning/error） */
+.fig-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--fig-spacing-s);
+  padding: var(--fig-spacing-s) var(--fig-spacing-m);
+  border-radius: var(--fig-radius-control);
+  border: 1px solid var(--color-border-default);
+  background: var(--color-surface-container-low);
+  color: var(--color-text-primary);
+  font-family: var(--fig-font-family-base);
+  font-size: var(--fig-size-body);
+  line-height: var(--fig-line-height-body);
+}
+.fig-alert--success { background: var(--color-surface-success); border-color: var(--color-icon-success); color: var(--color-text-success); }
+.fig-alert--warning { background: var(--color-surface-warning); border-color: var(--color-border-warning); color: var(--color-text-warning); }
+.fig-alert--error   { background: var(--color-surface-error);   border-color: var(--color-border-error);   color: var(--color-text-error); }
+
+/* .fig-badge — 数値/ドットバッジ */
+.fig-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--fig-size-body);
+  height: var(--fig-size-body);
+  padding-inline: var(--fig-spacing-xs);
+  border-radius: var(--fig-radius-pill);
+  background: var(--color-surface-brand);
+  color: var(--color-text-onBrand);
+  font-family: var(--fig-font-family-base);
+  font-size: var(--fig-size-caption);
+  font-weight: var(--fw-bold);
+  line-height: 1;
+}
+.fig-badge--dot { min-width: var(--fig-spacing-s); width: var(--fig-spacing-s); height: var(--fig-spacing-s); padding: 0; }
+
+/* .fig-status-pill — 状態ピル（status: success/warning/error/neutral） */
+.fig-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fig-spacing-xs);
+  padding: var(--fig-spacing-xs) var(--fig-spacing-s);
+  border-radius: var(--fig-radius-pill);
+  background: var(--color-surface-container-low);
+  color: var(--color-text-secondary);
+  font-family: var(--fig-font-family-base);
+  font-size: var(--fig-size-caption);
+  font-weight: var(--fw-semibold);
+  line-height: 1;
+}
+.fig-status-pill--success { background: var(--color-surface-success); color: var(--color-text-success); }
+.fig-status-pill--warning { background: var(--color-surface-warning); color: var(--color-text-warning); }
+.fig-status-pill--error   { background: var(--color-surface-error);   color: var(--color-text-error); }
+
+/* .fig-toast — 一時通知（浮遊） */
+.fig-toast {
+  display: flex;
+  align-items: center;
+  gap: var(--fig-spacing-s);
+  max-width: 360px;
+  padding: var(--fig-spacing-s) var(--fig-spacing-m);
+  border-radius: var(--fig-radius-control);
+  background: var(--color-surface-inverse);
+  color: var(--color-text-inverse);
+  box-shadow: var(--fig-elevation-floating);
+  font-family: var(--fig-font-family-base);
+  font-size: var(--fig-size-body);
+  line-height: var(--fig-line-height-tight);
+}
